@@ -53,7 +53,10 @@ const columns = [
 const StudentListPage = () => {
     const renderRow = (row: Student) => {
         return (
-            <tr key={row.id}>
+            <tr
+                key={row.id}
+                className="broder-b border-gray-200 even:bg-slate-50 text-sm hover:bg-purpleLight"
+            >
                 <td className="flex items-center gap-4 p-4">
                     <Image
                         src={row.photo}

@@ -5,17 +5,14 @@ import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
-import { role, studentsData } from '@/lib/data'
+import { role, parentsData } from '@/lib/data'
 
 type Parent = {
     id: number
-    studentId: string
     name: string
+    students: string[]
     email?: string
-    photo: string
-    phone?: string
-    grade: number
-    class: string
+    phone: string
     address: string
 }
 
@@ -25,8 +22,8 @@ const columns = [
         accessor: 'info',
     },
     {
-        header: 'Parent Name',
-        accessor: 'studentId',
+        header: 'Student Name',
+        accessor: 'students',
         className: 'hidden md:table-cell',
     },
     {
@@ -48,22 +45,19 @@ const columns = [
 const StudentListPage = () => {
     const renderRow = (row: Parent) => {
         return (
-            <tr key={row.id}>
+            <tr
+                key={row.id}
+                className="broder-b border-gray-200 even:bg-slate-50 text-sm hover:bg-purpleLight"
+            >
                 <td className="flex items-center gap-4 p-4">
-                    <Image
-                        src={row.photo}
-                        alt={row.name}
-                        width={40}
-                        height={40}
-                        className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
-                    />
                     <div className="flex flex-col">
                         <h3 className="font-semibold">{row.name}</h3>
-                        <p className="text-sm text-gray-500">{row?.class}</p>
+                        <p className="text-sm text-gray-500">{row?.email}</p>
                     </div>
                 </td>
-                <td className="hidden md:table-cell">{row.studentId}</td>
-                <td className="hidden md:table-cell">{row.grade}</td>
+                <td className="hidden md:table-cell">
+                    {row.students.join(',')}
+                </td>
                 <td className="hidden md:table-cell">{row.phone}</td>
                 <td className="hidden md:table-cell">{row.address}</td>
                 <td>
@@ -71,7 +65,7 @@ const StudentListPage = () => {
                         <Link href={`/list/students/${row.id}`}>
                             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-sky">
                                 <Image
-                                    src="/view.png"
+                                    src="/edit.png"
                                     alt="edit"
                                     width={16}
                                     height={16}
@@ -138,7 +132,7 @@ const StudentListPage = () => {
                 <Table
                     columns={columns}
                     renderRow={renderRow}
-                    data={studentsData}
+                    data={parentsData}
                 />
             </div>
 
