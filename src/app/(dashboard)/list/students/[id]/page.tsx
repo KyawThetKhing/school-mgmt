@@ -97,7 +97,7 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">6</h1>
+                                <h1 className="text-xl font-semibold">18</h1>
                                 <p className="text-sm text-gray-400">Lessons</p>
                             </div>
                         </div>
@@ -112,10 +112,8 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">2</h1>
-                                <p className="text-sm text-gray-400">
-                                    Branches
-                                </p>
+                                <h1 className="text-xl font-semibold">6th</h1>
+                                <p className="text-sm text-gray-400">Grade</p>
                             </div>
                         </div>
 
@@ -129,8 +127,8 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">6</h1>
-                                <p className="text-sm text-gray-400">Classes</p>
+                                <h1 className="text-xl font-semibold">6A</h1>
+                                <p className="text-sm text-gray-400">Class</p>
                             </div>
                         </div>
                     </div>
@@ -147,19 +145,19 @@ const StudentDetailPage = () => {
                     <h1 className="text-xl font-semibold">Shortcuts</h1>
                     <div className="mt-4 flex flex-wrap gap-4 text-xs text-gray-500">
                         <Link className="rounded-md bg-skyLight p-3" href="/">
-                            Teacher&apos;s Classes
+                            Student&apos;s Classes
                         </Link>
                         <Link className="rounded-md bg-skyLight p-3" href="/">
-                            Teacher&apos;s Students
+                            Student&apos;s Lessons
                         </Link>
                         <Link className="rounded-md bg-skyLight p-3" href="/">
-                            Teacher&apos;s Lessons
+                            Student&apos;s Teachers
                         </Link>
                         <Link className="rounded-md bg-skyLight p-3" href="/">
-                            Teacher&apos;s Exams
+                            Student&apos;s Exams
                         </Link>
                         <Link className="rounded-md bg-skyLight p-3" href="/">
-                            Teacher&apos;s Assignments
+                            Student&apos;s Assignments
                         </Link>
                     </div>
                 </div>
