@@ -77,8 +77,8 @@ const FinanceChart = () => {
     ]
 
     return (
-        <div className="bg-white rounded-xl w-full h-full p-4 gap-8">
-            <div className="flex justify-between items-center">
+        <div className="h-full w-full gap-8 rounded-xl bg-white p-4">
+            <div className="flex items-center justify-between">
                 <h1 className="text-lg font-semibold">Finance</h1>
                 <Image src="/moreDark.png" alt="" width={20} height={20} />
             </div>

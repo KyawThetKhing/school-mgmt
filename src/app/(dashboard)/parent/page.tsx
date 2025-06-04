@@ -4,10 +4,10 @@ import React from 'react'
 
 function ParentPage() {
     return (
-        <div className="flex-1 p-4 flex gap-4 flex-col md:flex-row h-full w-full overflow-scroll">
+        <div className="flex h-full w-full flex-1 flex-col gap-4 overflow-scroll p-4 md:flex-row">
             {/* LEFT */}
             <div className="w-full md:w-2/3">
-                <div className="h-full bg-white p-4 rounded-md">
+                <div className="h-full rounded-md bg-white p-4">
                     <h1 className="text-xl font-semibold">
                         Schedule (Jane Doe)
                     </h1>

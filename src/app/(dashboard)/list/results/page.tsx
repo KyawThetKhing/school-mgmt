@@ -63,7 +63,7 @@ const ResultListPage = () => {
         return (
             <tr
                 key={row.id}
-                className="broder-b border-gray-200 even:bg-slate-50 text-sm hover:bg-purpleLight"
+                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
             >
                 <td className="p-4">{row.subject}</td>
                 <td>{row.class}</td>
@@ -75,7 +75,7 @@ const ResultListPage = () => {
                 <td>
                     <div className="flex items-center gap-2">
                         <Link href={`/list/assignments/${row.id}`}>
-                            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-sky">
+                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
                                 <Image
                                     src="/edit.png"
                                     alt="edit"
@@ -85,7 +85,7 @@ const ResultListPage = () => {
                             </button>
                         </Link>
                         {role === 'admin' && (
-                            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-purple">
+                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
                                 <Image
                                     src="/delete.png"
                                     alt="edit"
@@ -100,16 +100,16 @@ const ResultListPage = () => {
         )
     }
     return (
-        <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+        <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}
             <div className="flex items-center justify-between">
-                <h1 className="hidden md:block text-lg font-semibold">
+                <h1 className="hidden text-lg font-semibold md:block">
                     All Results
                 </h1>
-                <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                <div className="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row">
                     <TableSearch />
                     <div className="flex items-center gap-4 self-end">
-                        <button className="w-8 h-8 flex items-center justify-center rounded-full bg-yellow">
+                        <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             <Image
                                 src="/filter.png"
                                 alt="filter"
@@ -117,7 +117,7 @@ const ResultListPage = () => {
                                 height={14}
                             />
                         </button>
-                        <button className="w-8 h-8 flex items-center justify-center rounded-full bg-yellow">
+                        <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             <Image
                                 src="/sort.png"
                                 alt="filter"
@@ -126,7 +126,7 @@ const ResultListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-yellow">
+                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                                 <Image
                                     src="/plus.png"
                                     alt="filter"

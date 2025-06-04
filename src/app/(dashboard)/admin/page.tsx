@@ -8,25 +8,25 @@ import Announcements from '@/components/Announcements'
 
 function AdminPage() {
     return (
-        <div className="p-4 flex gap-4 flex-col md:flex-row h-full w-full overflow-scroll">
+        <div className="flex h-full w-full flex-col gap-4 overflow-scroll p-4 md:flex-row">
             {/* LEFT */}
             <div className="w-full md:w-2/3">
                 {/* User Cards */}
-                <div className="flex gap-4 justify-between flex-wrap mb-4">
+                <div className="mb-4 flex flex-wrap justify-between gap-4">
                     <UserCard type="student" />
                     <UserCard type="teacher" />
                     <UserCard type="parent" />
                     <UserCard type="staff" />
                 </div>
-                <div className="flex gap-4 flex-col lg:flex-row mb-4">
-                    <div className="w-full lg:w-1/3 h-[450px]">
+                <div className="mb-4 flex flex-col gap-4 lg:flex-row">
+                    <div className="h-[450px] w-full lg:w-1/3">
                         <CountChart />
                     </div>
-                    <div className="w-full lg:w-2/3 h-[450px]">
+                    <div className="h-[450px] w-full lg:w-2/3">
                         <AttendanceChart />
                     </div>
                 </div>
-                <div className="w-full h-[500px]">
+                <div className="h-[500px] w-full">
                     <FinanceChart />
                 </div>
             </div>
