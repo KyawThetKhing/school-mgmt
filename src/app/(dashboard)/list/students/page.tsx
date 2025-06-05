@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { role, studentsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Student = {
     id: number
@@ -87,14 +88,11 @@ const StudentListPage = () => {
                             </button>
                         </Link>
                         {role === 'admin' && (
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
-                                <Image
-                                    src="/delete.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
+                            <FormModal
+                                table="student"
+                                type="delete"
+                                id={row.id}
+                            />
                         )}
                     </div>
                 </td>
@@ -128,14 +126,7 @@ const StudentListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
-                                <Image
-                                    src="/plus.png"
-                                    alt="filter"
-                                    width={14}
-                                    height={14}
-                                />
-                            </button>
+                            <FormModal type="create" table="student" />
                         )}
                     </div>
                 </div>

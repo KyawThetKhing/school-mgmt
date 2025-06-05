@@ -1,5 +1,6 @@
 import Announcements from '@/components/Announcements'
 import BigCalendar from '@/components/BigCalendar'
+import FormModal from '@/components/FormModal'
 import Performance from '@/components/Performance'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -24,9 +25,29 @@ const TeacherDetailPage = () => {
                             />
                         </div>
                         <div className="flex w-2/3 flex-col justify-between gap-4">
-                            <h1 className="text-xl font-semibold">
-                                Leonard Shyam
-                            </h1>
+                            <div className="flex items-center gap-4">
+                                <h1 className="text-xl font-semibold">
+                                    Leonard Shyam
+                                </h1>
+                                <FormModal
+                                    table="teacher"
+                                    type="update"
+                                    data={{
+                                        id: 1,
+                                        username: 'leonard',
+                                        email: 'leonard@gmail.com',
+                                        password: '12345678',
+                                        firstName: 'Leonard',
+                                        lastName: 'Shyam',
+                                        phone: '12345678',
+                                        address: '123 Main St',
+                                        bloodType: 'A+',
+                                        birthday: '2000-01-01',
+                                        sex: 'male',
+                                        img: 'https://images.pexels.com/photos/301952/pexels-photo-301952.jpeg?cs=srgb&dl=pexels-pixabay-301952.jpg&fm=jpg',
+                                    }}
+                                />
+                            </div>
                             <p className="text-sm text-gray-500">
                                 Lorem ipsum, dolor sit amet consec
                             </p>

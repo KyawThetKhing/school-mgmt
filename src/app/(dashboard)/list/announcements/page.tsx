@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { role, announcementsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Announcement = {
     id: number
@@ -46,6 +47,21 @@ const AnnouncementListPage = () => {
                 <td className="hidden md:table-cell">{row.date}</td>
                 <td>
                     <div className="flex items-center gap-2">
+                        {role === 'admin' && (
+                            <>
+                                <FormModal
+                                    table="announcement"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormModal
+                                    table="announcement"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+                        {/*                         
                         <Link href={`/list/announcements/${row.id}`}>
                             <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
                                 <Image
@@ -65,7 +81,7 @@ const AnnouncementListPage = () => {
                                     height={16}
                                 />
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </td>
             </tr>
@@ -98,14 +114,15 @@ const AnnouncementListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
-                                <Image
-                                    src="/plus.png"
-                                    alt="filter"
-                                    width={14}
-                                    height={14}
-                                />
-                            </button>
+                            <FormModal table="announcement" type="create" />
+                            // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
+                            //     <Image
+                            //         src="/plus.png"
+                            //         alt="filter"
+                            //         width={14}
+                            //         height={14}
+                            //     />
+                            // </button>
                         )}
                     </div>
                 </div>

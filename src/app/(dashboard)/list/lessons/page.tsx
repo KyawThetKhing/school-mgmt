@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { lessonsData, role } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Lesson = {
     id: number
@@ -46,6 +47,21 @@ const LessonListPage = () => {
                 <td className="hidden md:table-cell">{row.teacher}</td>
                 <td>
                     <div className="flex items-center gap-2">
+                        {role === 'admin' && (
+                            <>
+                                <FormModal
+                                    table="lesson"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormModal
+                                    table="lesson"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+                        {/*                         
                         <Link href={`/list/lessons/${row.id}`}>
                             <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
                                 <Image
@@ -65,7 +81,7 @@ const LessonListPage = () => {
                                     height={16}
                                 />
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </td>
             </tr>
@@ -98,14 +114,15 @@ const LessonListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
-                                <Image
-                                    src="/plus.png"
-                                    alt="filter"
-                                    width={14}
-                                    height={14}
-                                />
-                            </button>
+                            <FormModal table="lesson" type="create" />
+                            // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
+                            //     <Image
+                            //         src="/plus.png"
+                            //         alt="filter"
+                            //         width={14}
+                            //         height={14}
+                            //     />
+                            // </button>
                         )}
                     </div>
                 </div>

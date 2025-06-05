@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { role, parentsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Parent = {
     id: number
@@ -62,7 +63,21 @@ const StudentListPage = () => {
                 <td className="hidden md:table-cell">{row.address}</td>
                 <td>
                     <div className="flex items-center gap-2">
-                        <Link href={`/list/students/${row.id}`}>
+                        {role === 'admin' && (
+                            <>
+                                <FormModal
+                                    table="parent"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormModal
+                                    table="parent"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+                        {/* <Link href={`/list/students/${row.id}`}>
                             <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
                                 <Image
                                     src="/edit.png"
@@ -73,15 +88,20 @@ const StudentListPage = () => {
                             </button>
                         </Link>
                         {role === 'admin' && (
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
-                                <Image
-                                    src="/delete.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
-                        )}
+                            // <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
+                            //     <Image
+                            //         src="/delete.png"
+                            //         alt="edit"
+                            //         width={16}
+                            //         height={16}
+                            //     />
+                            // </button>
+                            <FormModal
+                                table="parent"
+                                type="delete"
+                                id={row.id}
+                            />
+                        )} */}
                     </div>
                 </td>
             </tr>
@@ -114,14 +134,15 @@ const StudentListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
-                                <Image
-                                    src="/plus.png"
-                                    alt="filter"
-                                    width={14}
-                                    height={14}
-                                />
-                            </button>
+                            // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
+                            //     <Image
+                            //         src="/plus.png"
+                            //         alt="filter"
+                            //         width={14}
+                            //         height={14}
+                            //     />
+                            // </button>
+                            <FormModal type="create" table="parent" />
                         )}
                     </div>
                 </div>

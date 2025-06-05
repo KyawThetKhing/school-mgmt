@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { role, eventsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Event = {
     id: number
@@ -53,6 +54,21 @@ const EventListPage = () => {
                 <td className="hidden md:table-cell">{row.endTime}</td>
                 <td>
                     <div className="flex items-center gap-2">
+                        {role === 'admin' && (
+                            <>
+                                <FormModal
+                                    table="event"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormModal
+                                    table="event"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+                        {/*                         
                         <Link href={`/list/events/${row.id}`}>
                             <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
                                 <Image
@@ -72,7 +88,7 @@ const EventListPage = () => {
                                     height={16}
                                 />
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </td>
             </tr>
@@ -105,14 +121,15 @@ const EventListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
-                                <Image
-                                    src="/plus.png"
-                                    alt="filter"
-                                    width={14}
-                                    height={14}
-                                />
-                            </button>
+                            <FormModal table="event" type="create" />
+                            // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
+                            //     <Image
+                            //         src="/plus.png"
+                            //         alt="filter"
+                            //         width={14}
+                            //         height={14}
+                            //     />
+                            // </button>
                         )}
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { role, resultsData } from '@/lib/data'
+import FormModal from '@/components/FormModal'
 
 type Result = {
     id: number
@@ -74,7 +75,22 @@ const ResultListPage = () => {
                 <td className="hidden md:table-cell">{row.score}</td>
                 <td>
                     <div className="flex items-center gap-2">
-                        <Link href={`/list/assignments/${row.id}`}>
+                        {role === 'admin' && (
+                            <>
+                                <FormModal
+                                    table="result"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormModal
+                                    table="result"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+
+                        {/* <Link href={`/list/assignments/${row.id}`}>
                             <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
                                 <Image
                                     src="/edit.png"
@@ -93,7 +109,7 @@ const ResultListPage = () => {
                                     height={16}
                                 />
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </td>
             </tr>
@@ -126,14 +142,15 @@ const ResultListPage = () => {
                             />
                         </button>
                         {role === 'admin' && (
-                            <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
-                                <Image
-                                    src="/plus.png"
-                                    alt="filter"
-                                    width={14}
-                                    height={14}
-                                />
-                            </button>
+                            <FormModal table="result" type="create" />
+                            // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
+                            //     <Image
+                            //         src="/plus.png"
+                            //         alt="filter"
+                            //         width={14}
+                            //         height={14}
+                            //     />
+                            // </button>
                         )}
                     </div>
                 </div>
