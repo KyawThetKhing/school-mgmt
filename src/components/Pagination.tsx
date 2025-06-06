@@ -11,6 +11,8 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
         router.push(`${window.location.pathname}?${params}`)
     }
 
+    if (!count) return null
+
     return (
         <div className="flex items-center justify-between p-4 text-gray-500">
             <button

@@ -4,18 +4,13 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import Link from 'next/link'
-import { classesData, role } from '@/lib/data'
+import { role } from '@/lib/data'
 import FormModal from '@/components/FormModal'
+import { prisma } from '@/lib/prisma'
+import { ITEM_PER_PAGE } from '@/lib/settings'
+import { Class, Grade, Prisma, Teacher } from '@prisma/client'
 
-type Class = {
-    id: number
-    name: string
-    capacity: number
-    grade: number
-    teachers: string[]
-    supervisor: string
-}
+type ClassList = Class & { supervisor: Teacher }
 
 const columns = [
     {
@@ -43,59 +38,99 @@ const columns = [
     },
 ]
 
-const StudentListPage = () => {
-    const renderRow = (row: Class) => {
-        return (
-            <tr
-                key={row.id}
-                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
-            >
-                <td className="p-4">{row.name}</td>
-                <td className="hidden p-4 md:table-cell">{row.capacity}</td>
-                <td className="hidden p-4 md:table-cell">{row.grade}</td>
-                <td className="hidden p-4 md:table-cell">{row.supervisor}</td>
-                <td>
-                    <div className="flex items-center gap-2">
-                        {role === 'admin' && (
-                            <>
-                                <FormModal
-                                    table="class"
-                                    type="update"
-                                    data={row}
-                                />
-                                <FormModal
-                                    table="class"
-                                    type="delete"
-                                    id={row.id}
-                                />
-                            </>
-                        )}
-                        {/*                         
-                        <Link href={`/list/subjects/${row.id}`}>
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                                <Image
-                                    src="/edit.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
-                        </Link>
-                        {role === 'admin' && (
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
-                                <Image
-                                    src="/delete.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
-                        )} */}
-                    </div>
-                </td>
-            </tr>
-        )
+const renderRow = (row: ClassList) => {
+    return (
+        <tr
+            key={row.id}
+            className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
+        >
+            <td className="p-4">{row.name}</td>
+            <td className="hidden p-4 md:table-cell">{row.capacity}</td>
+            <td className="hidden p-4 md:table-cell">{row.name[0]}</td>
+            <td className="hidden p-4 md:table-cell">{row.supervisor.name}</td>
+            <td>
+                <div className="flex items-center gap-2">
+                    {role === 'admin' && (
+                        <>
+                            <FormModal table="class" type="update" data={row} />
+                            <FormModal
+                                table="class"
+                                type="delete"
+                                id={row.id}
+                            />
+                        </>
+                    )}
+                    {/*                         
+                    <Link href={`/list/subjects/${row.id}`}>
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                            <Image
+                                src="/edit.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
+                            />
+                        </button>
+                    </Link>
+                    {role === 'admin' && (
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
+                            <Image
+                                src="/delete.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
+                            />
+                        </button>
+                    )} */}
+                </div>
+            </td>
+        </tr>
+    )
+}
+
+const StudentListPage = async ({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | undefined }
+}) => {
+    const { page, ...otherParams } = searchParams
+    const p = page ? parseInt(page) : 1
+
+    const query: Prisma.ClassWhereInput = {}
+
+    if (otherParams) {
+        for (const [key, value] of Object.entries(otherParams)) {
+            if (value !== undefined) {
+                switch (key) {
+                    case 'supervisorId':
+                        query.supervisorId = value
+                        break
+                    case 'search':
+                        query.name = {
+                            contains: value,
+                            mode: 'insensitive',
+                        }
+                        break
+                    default:
+                        break
+                }
+            }
+        }
     }
+
+    const [data, count] = await prisma.$transaction([
+        prisma.class.findMany({
+            where: query,
+            include: {
+                supervisor: true,
+            },
+            take: ITEM_PER_PAGE,
+            skip: (p - 1) * ITEM_PER_PAGE,
+        }),
+        prisma.class.count({
+            where: query,
+        }),
+    ])
+
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}
@@ -139,16 +174,12 @@ const StudentListPage = () => {
 
             {/* LIST */}
             <div className="">
-                <Table
-                    columns={columns}
-                    renderRow={renderRow}
-                    data={classesData}
-                />
+                <Table columns={columns} renderRow={renderRow} data={data} />
             </div>
 
             {/* PAGINATION */}
             <div className="">
-                <Pagination />
+                <Pagination page={p} count={count} />
             </div>
         </div>
     )

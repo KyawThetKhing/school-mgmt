@@ -4,29 +4,32 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import Link from 'next/link'
-import { role, resultsData } from '@/lib/data'
+import { role } from '@/lib/data'
 import FormModal from '@/components/FormModal'
+import { Prisma } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
+import { ITEM_PER_PAGE } from '@/lib/settings'
 
-type Result = {
+type ResultList = {
     id: number
-    subject: string
-    class: string
-    teacher: string
-    student: string
-    date: string
-    type: 'exam' | 'assignment'
+    title: string
+    studentName: string
+    studentSurname: string
+    teacherName: string
+    teacherSurname: string
     score: number
+    className: string
+    startTime: Date
 }
 
 const columns = [
     {
-        header: 'Subject',
-        accessor: 'subject',
+        header: 'Title',
+        accessor: 'title',
     },
     {
         header: 'Class',
-        accessor: 'class',
+        accessor: 'className',
     },
     {
         header: 'Teacher',
@@ -59,62 +62,170 @@ const columns = [
     },
 ]
 
-const ResultListPage = () => {
-    const renderRow = (row: Result) => {
-        return (
-            <tr
-                key={row.id}
-                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
-            >
-                <td className="p-4">{row.subject}</td>
-                <td>{row.class}</td>
-                <td className="hidden md:table-cell">{row.teacher}</td>
-                <td className="hidden md:table-cell">{row.student}</td>
-                <td className="hidden md:table-cell">{row.date}</td>
-                <td className="hidden md:table-cell">{row.type}</td>
-                <td className="hidden md:table-cell">{row.score}</td>
-                <td>
-                    <div className="flex items-center gap-2">
-                        {role === 'admin' && (
-                            <>
-                                <FormModal
-                                    table="result"
-                                    type="update"
-                                    data={row}
-                                />
-                                <FormModal
-                                    table="result"
-                                    type="delete"
-                                    id={row.id}
-                                />
-                            </>
-                        )}
+const renderRow = (row: ResultList) => {
+    return (
+        <tr
+            key={row.id}
+            className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
+        >
+            <td className="p-4">{row.title}</td>
+            <td>{row.className}</td>
+            <td className="hidden md:table-cell">
+                {row.teacherName + ' ' + row.teacherSurname}
+            </td>
+            <td className="hidden md:table-cell">
+                {row.studentName + ' ' + row.studentSurname}
+            </td>
+            <td className="hidden md:table-cell">
+                {new Intl.DateTimeFormat('en-US').format(row.startTime)}
+            </td>
+            <td className="hidden md:table-cell">{row.score}</td>
+            <td>
+                <div className="flex items-center gap-2">
+                    {role === 'admin' && (
+                        <>
+                            <FormModal
+                                table="result"
+                                type="update"
+                                data={row}
+                            />
+                            <FormModal
+                                table="result"
+                                type="delete"
+                                id={row.id}
+                            />
+                        </>
+                    )}
 
-                        {/* <Link href={`/list/assignments/${row.id}`}>
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                                <Image
-                                    src="/edit.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
-                        </Link>
-                        {role === 'admin' && (
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
-                                <Image
-                                    src="/delete.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
-                        )} */}
-                    </div>
-                </td>
-            </tr>
-        )
+                    {/* <Link href={`/list/assignments/${row.id}`}>
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                            <Image
+                                src="/edit.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
+                            />
+                        </button>
+                    </Link>
+                    {role === 'admin' && (
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
+                            <Image
+                                src="/delete.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
+                            />
+                        </button>
+                    )} */}
+                </div>
+            </td>
+        </tr>
+    )
+}
+
+const ResultListPage = async ({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | undefined }
+}) => {
+    const { page, ...queryParams } = searchParams
+
+    const p = page ? parseInt(page) : 1
+
+    // URL PARAMS CONDITION
+
+    const query: Prisma.ResultWhereInput = {}
+
+    if (queryParams) {
+        for (const [key, value] of Object.entries(queryParams)) {
+            if (value !== undefined) {
+                switch (key) {
+                    case 'studentId':
+                        query.studentId = value
+                        break
+                    case 'search':
+                        query.OR = [
+                            {
+                                exam: {
+                                    title: {
+                                        contains: value,
+                                        mode: 'insensitive',
+                                    },
+                                },
+                            },
+                            {
+                                student: {
+                                    name: {
+                                        contains: value,
+                                        mode: 'insensitive',
+                                    },
+                                },
+                            },
+                        ]
+                        break
+                    default:
+                        break
+                }
+            }
+        }
     }
+
+    const [dataRes, count] = await prisma.$transaction([
+        prisma.result.findMany({
+            where: query,
+            include: {
+                student: { select: { name: true, surname: true } },
+                exam: {
+                    include: {
+                        lesson: {
+                            select: {
+                                class: { select: { name: true } },
+                                teacher: {
+                                    select: { name: true, surname: true },
+                                },
+                            },
+                        },
+                    },
+                },
+                assignment: {
+                    include: {
+                        lesson: {
+                            select: {
+                                class: { select: { name: true } },
+                                teacher: {
+                                    select: { name: true, surname: true },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            take: ITEM_PER_PAGE,
+            skip: ITEM_PER_PAGE * (p - 1),
+        }),
+        prisma.result.count({ where: query }),
+    ])
+
+    const data = dataRes.map((item) => {
+        const assessment = item.exam || item.assignment
+
+        if (!assessment) return null
+
+        const isExam = 'startTime' in assessment
+
+        return {
+            id: item.id,
+            title: assessment.title,
+            studentName: item.student.name,
+            studentSurname: item.student.surname,
+            teacherName: assessment.lesson.teacher.name,
+            teacherSurname: assessment.lesson.teacher.surname,
+            score: item.score,
+            className: assessment.lesson.class.name,
+            startTime: isExam ? assessment.startTime : assessment.startDate,
+        }
+    })
+
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}
@@ -158,16 +269,12 @@ const ResultListPage = () => {
 
             {/* LIST */}
             <div className="">
-                <Table
-                    columns={columns}
-                    renderRow={renderRow}
-                    data={resultsData}
-                />
+                <Table columns={columns} renderRow={renderRow} data={data} />
             </div>
 
             {/* PAGINATION */}
             <div className="">
-                <Pagination />
+                <Pagination page={p} count={count} />
             </div>
         </div>
     )

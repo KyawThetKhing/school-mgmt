@@ -147,17 +147,35 @@ const StudentDetailPage = () => {
                         <Link className="rounded-md bg-skyLight p-3" href="/">
                             Student&apos;s Classes
                         </Link>
-                        <Link className="rounded-md bg-skyLight p-3" href="/">
+                        <Link
+                            className="rounded-md bg-skyLight p-3"
+                            href={`/list/lessons?classId=2`}
+                        >
                             Student&apos;s Lessons
                         </Link>
-                        <Link className="rounded-md bg-skyLight p-3" href="/">
+                        <Link
+                            className="rounded-md bg-skyLight p-3"
+                            href={`/list/teachers?classId=2`}
+                        >
                             Student&apos;s Teachers
                         </Link>
-                        <Link className="rounded-md bg-skyLight p-3" href="/">
+                        <Link
+                            className="rounded-md bg-skyLight p-3"
+                            href={`/list/exams?classId=2`}
+                        >
                             Student&apos;s Exams
                         </Link>
-                        <Link className="rounded-md bg-skyLight p-3" href="/">
+                        <Link
+                            className="rounded-md bg-skyLight p-3"
+                            href={`/list/assignments?classId=2`}
+                        >
                             Student&apos;s Assignments
+                        </Link>
+                        <Link
+                            className="rounded-md bg-skyLight p-3"
+                            href={`/list/results?studentId=student2`}
+                        >
+                            Student&apos;s Results
                         </Link>
                     </div>
                 </div>

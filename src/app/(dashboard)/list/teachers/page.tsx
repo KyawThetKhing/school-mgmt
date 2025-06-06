@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Teacher, Subject, Class } from '@prisma/client'
+import { Teacher, Subject, Class, Prisma } from '@prisma/client'
 
 import TableSearch from '@/components/TableSearch'
 import Pagination from '@/components/Pagination'
@@ -105,8 +105,35 @@ const TeacherListPage = async ({
     const { page, ...otherParams } = searchParams
     const p = page ? parseInt(page) : 1
 
+    const query: Prisma.TeacherWhereInput = {}
+
+    if (otherParams) {
+        for (const [key, value] of Object.entries(otherParams)) {
+            if (value !== undefined) {
+                switch (key) {
+                    case 'classId':
+                        query.lessons = {
+                            some: {
+                                classId: parseInt(value),
+                            },
+                        }
+                        break
+                    case 'search':
+                        query.name = {
+                            contains: value,
+                            mode: 'insensitive',
+                        }
+                        break
+                    default:
+                        break
+                }
+            }
+        }
+    }
+
     const [data, count] = await prisma.$transaction([
         prisma.teacher.findMany({
+            where: query,
             include: {
                 subjects: true,
                 classes: true,
@@ -114,9 +141,10 @@ const TeacherListPage = async ({
             take: ITEM_PER_PAGE,
             skip: (p - 1) * ITEM_PER_PAGE,
         }),
-        prisma.teacher.count(),
+        prisma.teacher.count({
+            where: query,
+        }),
     ])
-    console.log('Teachers', data)
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}
