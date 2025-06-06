@@ -1,25 +1,17 @@
 import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Teacher, Subject, Class } from '@prisma/client'
 
 import TableSearch from '@/components/TableSearch'
-import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import Link from 'next/link'
-import { role, teachersData } from '@/lib/data'
+import { role } from '@/lib/data'
 import FormModal from '@/components/FormModal'
+import { prisma } from '@/lib/prisma'
+import { ITEM_PER_PAGE } from '@/lib/settings'
 
-type Teacher = {
-    id: number
-    teacherId: string
-    name: string
-    email?: string
-    photo: string
-    phone: string
-    subjects: string[]
-    classes: string[]
-    address: string
-}
-
+type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] }
 const columns = [
     {
         header: 'Info',
@@ -56,59 +48,75 @@ const columns = [
     },
 ]
 
-const TeacherListPage = () => {
-    const renderRow = (row: Teacher) => {
-        return (
-            <tr
-                key={row.id}
-                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
-            >
-                <td className="flex items-center gap-4 p-4">
-                    <Image
-                        src={row.photo}
-                        alt={row.name}
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded-full object-cover md:hidden xl:block"
-                    />
-                    <div className="flex flex-col">
-                        <h3 className="font-semibold">{row.name}</h3>
-                        <p className="text-sm text-gray-500">{row?.email}</p>
-                    </div>
-                </td>
-                <td className="hidden md:table-cell">{row.teacherId}</td>
-                <td className="hidden md:table-cell">
-                    {row.subjects.join(',')}
-                </td>
-                <td className="hidden md:table-cell">
-                    {row.classes.join(',')}
-                </td>
-                <td className="hidden md:table-cell">{row.phone}</td>
-                <td className="hidden md:table-cell">{row.address}</td>
-                <td>
-                    <div className="flex items-center gap-2">
-                        <Link href={`/list/teachers/${row.id}`}>
-                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                                <Image
-                                    src="/view.png"
-                                    alt="edit"
-                                    width={16}
-                                    height={16}
-                                />
-                            </button>
-                        </Link>
-                        {role === 'admin' && (
-                            <FormModal
-                                table="teacher"
-                                type="delete"
-                                id={row.id}
+const renderRow = (row: TeacherList) => {
+    return (
+        <tr
+            key={row.id}
+            className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
+        >
+            <td className="flex items-center gap-4 p-4">
+                <Image
+                    src={row.img || '/noAvatar.png'}
+                    alt={row.name}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full object-cover md:hidden xl:block"
+                />
+                <div className="flex flex-col">
+                    <h3 className="font-semibold">{row.name}</h3>
+                    <p className="text-sm text-gray-500">{row?.email}</p>
+                </div>
+            </td>
+            <td className="hidden md:table-cell">{row.id}</td>
+            <td className="hidden md:table-cell">
+                {row.subjects.map((subject) => subject.name).join(',')}
+            </td>
+            <td className="hidden md:table-cell">
+                {row.classes.map((classItem) => classItem.name).join(',')}
+            </td>
+            <td className="hidden md:table-cell">{row.phone}</td>
+            <td className="hidden md:table-cell">{row.address}</td>
+            <td>
+                <div className="flex items-center gap-2">
+                    <Link href={`/list/teachers/${row.id}`}>
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                            <Image
+                                src="/view.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
                             />
-                        )}
-                    </div>
-                </td>
-            </tr>
-        )
-    }
+                        </button>
+                    </Link>
+                    {role === 'admin' && (
+                        <FormModal table="teacher" type="delete" id={row.id} />
+                    )}
+                </div>
+            </td>
+        </tr>
+    )
+}
+
+const TeacherListPage = async ({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | undefined }
+}) => {
+    const { page, ...otherParams } = searchParams
+    const p = page ? parseInt(page) : 1
+
+    const [data, count] = await prisma.$transaction([
+        prisma.teacher.findMany({
+            include: {
+                subjects: true,
+                classes: true,
+            },
+            take: ITEM_PER_PAGE,
+            skip: (p - 1) * ITEM_PER_PAGE,
+        }),
+        prisma.teacher.count(),
+    ])
+    console.log('Teachers', data)
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}
@@ -144,16 +152,12 @@ const TeacherListPage = () => {
 
             {/* LIST */}
             <div className="">
-                <Table
-                    columns={columns}
-                    renderRow={renderRow}
-                    data={teachersData}
-                />
+                <Table columns={columns} renderRow={renderRow} data={data} />
             </div>
 
             {/* PAGINATION */}
             <div className="">
-                <Pagination />
+                <Pagination page={p} count={count} />
             </div>
         </div>
     )
