@@ -4,7 +4,7 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import { role } from '@/lib/data'
+import { currentUserId, role } from '@/lib/utils'
 import FormModal from '@/components/FormModal'
 import { Prisma, Class, Event } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
@@ -36,10 +36,14 @@ const columns = [
         accessor: 'endTime',
         className: 'hidden md:table-cell',
     },
-    {
-        header: 'Actions',
-        accessor: 'action',
-    },
+    ...(role === 'admin'
+        ? [
+              {
+                  header: 'Actions',
+                  accessor: 'action',
+              },
+          ]
+        : []),
 ]
 
 const renderRow = (row: EventList) => {
@@ -49,7 +53,7 @@ const renderRow = (row: EventList) => {
             className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
         >
             <td className="p-4">{row.title}</td>
-            <td>{row.class.name}</td>
+            <td>{row.class?.name || '-'}</td>
             <td className="hidden md:table-cell">
                 {new Intl.DateTimeFormat('en-US').format(row.startTime)}
             </td>
@@ -132,6 +136,17 @@ const EventListPage = async ({
             }
         }
     }
+
+    const roleConditions = {
+        teacher: { lessons: { some: { teacherId: currentUserId! } } },
+        student: { students: { some: { id: currentUserId! } } },
+        parent: { students: { some: { parentId: currentUserId! } } },
+    }
+
+    query.OR = [
+        { classId: null },
+        { class: roleConditions[role as keyof typeof roleConditions] || {} },
+    ]
 
     const [data, count] = await prisma.$transaction([
         prisma.event.findMany({

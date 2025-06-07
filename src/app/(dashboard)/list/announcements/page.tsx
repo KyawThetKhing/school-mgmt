@@ -6,14 +6,11 @@ import FormModal from '@/components/FormModal'
 import { Announcement, Prisma, Class } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { auth } from '@clerk/nextjs/server'
+import { currentUserId, role } from '@/lib/utils'
 
 type AnnouncementList = Announcement & {
     class: Class
 }
-
-const { sessionClaims } = await auth()
-const role = (sessionClaims?.metadata as { role?: string }).role
 
 const columns = [
     {
@@ -29,10 +26,14 @@ const columns = [
         accessor: 'date',
         className: 'hidden md:table-cell',
     },
-    {
-        header: 'Actions',
-        accessor: 'action',
-    },
+    ...(role === 'admin'
+        ? [
+              {
+                  header: 'Actions',
+                  accessor: 'action',
+              },
+          ]
+        : []),
 ]
 
 const renderRow = async (row: AnnouncementList) => {
@@ -42,7 +43,7 @@ const renderRow = async (row: AnnouncementList) => {
             className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
         >
             <td className="p-4">{row.title}</td>
-            <td>{row.class.name}</td>
+            <td>{row.class?.name || '-'}</td>
             <td className="hidden md:table-cell">
                 {' '}
                 {new Intl.DateTimeFormat('en-US').format(row.date)}
@@ -116,6 +117,17 @@ const AnnouncementListPage = async ({
             }
         }
     }
+
+    const roleConditions = {
+        teacher: { lessons: { some: { teacherId: currentUserId! } } },
+        student: { students: { some: { id: currentUserId! } } },
+        parent: { students: { some: { parentId: currentUserId! } } },
+    }
+
+    query.OR = [
+        { classId: null },
+        { class: roleConditions[role as keyof typeof roleConditions] || {} },
+    ]
 
     const [data, count] = await prisma.$transaction([
         prisma.announcement.findMany({

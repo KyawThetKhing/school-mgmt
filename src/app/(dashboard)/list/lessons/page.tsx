@@ -4,7 +4,7 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import { role } from '@/lib/data'
+import { role } from '@/lib/utils'
 import FormModal from '@/components/FormModal'
 import { Lesson, Prisma, Class, Subject, Teacher } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
@@ -30,10 +30,14 @@ const columns = [
         accessor: 'teacher',
         className: 'hidden md:table-cell',
     },
-    {
-        header: 'Actions',
-        accessor: 'action',
-    },
+    ...(role === 'admin'
+        ? [
+              {
+                  header: 'Actions',
+                  accessor: 'action',
+              },
+          ]
+        : []),
 ]
 
 const renderRow = (row: LessonList) => {

@@ -4,8 +4,7 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import Link from 'next/link'
-import { role, parentsData } from '@/lib/data'
+import { role } from '@/lib/utils'
 import FormModal from '@/components/FormModal'
 import { prisma } from '@/lib/prisma'
 import { Parent, Prisma, Student } from '@prisma/client'
@@ -33,10 +32,14 @@ const columns = [
         accessor: 'address',
         className: 'hidden md:table-cell',
     },
-    {
-        header: 'Actions',
-        accessor: 'action',
-    },
+    ...(role === 'admin'
+        ? [
+              {
+                  header: 'Actions',
+                  accessor: 'action',
+              },
+          ]
+        : []),
 ]
 
 const renderRow = (row: ParentList) => {

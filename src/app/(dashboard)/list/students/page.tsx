@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
-import { role } from '@/lib/data'
+import { role } from '@/lib/utils'
 import FormModal from '@/components/FormModal'
 import { prisma } from '@/lib/prisma'
 import { Prisma, Student, Class } from '@prisma/client'
@@ -38,10 +38,14 @@ const columns = [
         accessor: 'address',
         className: 'hidden md:table-cell',
     },
-    {
-        header: 'Actions',
-        accessor: 'action',
-    },
+    ...(role === 'admin'
+        ? [
+              {
+                  header: 'Actions',
+                  accessor: 'action',
+              },
+          ]
+        : []),
 ]
 
 const renderRow = (row: StudentList) => {
@@ -69,18 +73,24 @@ const renderRow = (row: StudentList) => {
             <td className="hidden md:table-cell">{row.address}</td>
             <td>
                 <div className="flex items-center gap-2">
-                    <Link href={`/list/students/${row.id}`}>
-                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                            <Image
-                                src="/view.png"
-                                alt="edit"
-                                width={16}
-                                height={16}
-                            />
-                        </button>
-                    </Link>
                     {role === 'admin' && (
-                        <FormModal table="student" type="delete" id={row.id} />
+                        <>
+                            <Link href={`/list/students/${row.id}`}>
+                                <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                                    <Image
+                                        src="/view.png"
+                                        alt="edit"
+                                        width={16}
+                                        height={16}
+                                    />
+                                </button>
+                            </Link>
+                            <FormModal
+                                table="student"
+                                type="delete"
+                                id={row.id}
+                            />
+                        </>
                     )}
                 </div>
             </td>
