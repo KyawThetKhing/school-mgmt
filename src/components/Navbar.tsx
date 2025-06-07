@@ -1,7 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
+import { UserButton } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs/server'
 
-const Navbar = () => {
+const Navbar = async () => {
+    const user = await currentUser()
+    const role = (user?.publicMetadata as { role: string })?.role
     return (
         <div className="flex items-center justify-between p-4">
             <div className="hidden items-center gap-2 rounded-full px-2 text-xs ring-[1.5px] ring-gray-300 md:flex">
@@ -33,16 +37,17 @@ const Navbar = () => {
                         John Doe
                     </span>
                     <span className="text-right text-[10px] text-gray-500">
-                        Admin
+                        {role}
                     </span>
                 </div>
-                <Image
+                {/* <Image
                     src="/avatar.png"
                     alt="Avatar"
                     width={36}
                     height={36}
                     className="rounded-full"
-                />
+                /> */}
+                <UserButton />
             </div>
         </div>
     )

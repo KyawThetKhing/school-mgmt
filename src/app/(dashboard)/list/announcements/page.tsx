@@ -1,18 +1,19 @@
-import React from 'react'
-
 import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import { role } from '@/lib/data'
 import FormModal from '@/components/FormModal'
 import { Announcement, Prisma, Class } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import { auth } from '@clerk/nextjs/server'
 
 type AnnouncementList = Announcement & {
     class: Class
 }
+
+const { sessionClaims } = await auth()
+const role = (sessionClaims?.metadata as { role?: string }).role
 
 const columns = [
     {
@@ -34,7 +35,7 @@ const columns = [
     },
 ]
 
-const renderRow = (row: AnnouncementList) => {
+const renderRow = async (row: AnnouncementList) => {
     return (
         <tr
             key={row.id}

@@ -138,8 +138,6 @@ const StudentListPage = async ({
         }),
     ])
 
-    console.log('Students', data)
-
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}
