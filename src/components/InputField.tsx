@@ -8,6 +8,7 @@ type InputFieldProps = {
     defaultValue?: string
     error?: FieldError
     inputProps?: React.InputHTMLAttributes<HTMLInputElement>
+    hidden?: boolean
 }
 
 const InputField = ({
@@ -18,9 +19,14 @@ const InputField = ({
     defaultValue,
     error,
     inputProps,
+    hidden,
 }: InputFieldProps) => {
     return (
-        <div className="flex w-full flex-col gap-2 md:w-1/4">
+        <div
+            className={
+                hidden ? 'hidden' : 'flex w-full flex-col gap-2 md:w-1/4'
+            }
+        >
             <label className="text-xs text-gray-500">{label}</label>
             <input
                 type={type}
@@ -28,6 +34,7 @@ const InputField = ({
                 className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
                 {...inputProps}
                 defaultValue={defaultValue}
+                hidden={hidden}
             />
             {error?.message && (
                 <p className="text-xs text-red-400">

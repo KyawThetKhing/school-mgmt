@@ -5,10 +5,10 @@ import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import { role } from '@/lib/utils'
-import FormModal from '@/components/FormModal'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
 import { Prisma, Subject, Teacher } from '@prisma/client'
+import FormContainer from '@/components/FormContainer'
 
 type SubjectList = Subject & { teachers: Teacher[] }
 
@@ -47,12 +47,12 @@ const renderRow = (row: SubjectList) => {
                 <div className="flex items-center gap-2">
                     {role === 'admin' && (
                         <>
-                            <FormModal
+                            <FormContainer
                                 table="subject"
                                 type="update"
                                 data={row}
                             />
-                            <FormModal
+                            <FormContainer
                                 table="subject"
                                 type="delete"
                                 id={row.id}
@@ -162,7 +162,7 @@ const StudentListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="subject" type="create" />
+                            <FormContainer table="subject" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"

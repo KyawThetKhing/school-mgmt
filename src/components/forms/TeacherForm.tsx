@@ -28,9 +28,11 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>
 
 const TecherForm = ({
+    setOpen,
     type,
     data,
 }: {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
     type: 'create' | 'update'
     data?: any
 }) => {

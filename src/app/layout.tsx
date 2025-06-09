@@ -1,12 +1,6 @@
 import type { Metadata } from 'next'
-import {
-    ClerkProvider,
-    SignInButton,
-    SignUpButton,
-    SignedIn,
-    SignedOut,
-    UserButton,
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
+import { ToastContainer } from 'react-toastify'
 
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -26,7 +20,10 @@ export default function RootLayout({
     return (
         <ClerkProvider>
             <html lang="en">
-                <body className={inter.className}>{children}</body>
+                <body className={inter.className}>
+                    <ToastContainer position="bottom-right" theme="dark" />
+                    {children}
+                </body>
             </html>
         </ClerkProvider>
     )
