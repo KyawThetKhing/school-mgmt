@@ -6,7 +6,7 @@ import { useFormState } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
-import { deleteSubject } from '@/lib/actions'
+import { deleteClass, deleteSubject } from '@/lib/actions'
 import { FormContainerProps } from './FormContainer'
 
 const TeacherForm = dynamic(() => import('./forms/TeacherForm'), {
@@ -16,6 +16,10 @@ const StudentForm = dynamic(() => import('./forms/StudentForm'), {
     loading: () => <div>Loading...</div>,
 })
 const SubjectForm = dynamic(() => import('./forms/SubjectForm'), {
+    loading: () => <div>Loading...</div>,
+})
+
+const ClassForm = dynamic(() => import('./forms/ClassForm'), {
     loading: () => <div>Loading...</div>,
 })
 
@@ -40,7 +44,7 @@ const forms: {
             setOpen={setOpen}
             type={type}
             data={data}
-            relatedData={relatedData}
+            // relatedData={relatedData}
         />
     ),
     student: (setOpen, type, data, relatedData) => (
@@ -48,7 +52,15 @@ const forms: {
             setOpen={setOpen}
             type={type}
             data={data}
-            relatedData={relatedData}
+            // relatedData={relatedData}
+        />
+    ),
+    class: (setOpen, type, data, realatedData) => (
+        <ClassForm
+            setOpen={setOpen}
+            type={type}
+            data={data}
+            relatedData={realatedData}
         />
     ),
 }
@@ -58,7 +70,7 @@ const deleteActionMap = {
     teacher: deleteSubject,
     student: deleteSubject,
     parent: deleteSubject,
-    class: deleteSubject,
+    class: deleteClass,
     lesson: deleteSubject,
     exam: deleteSubject,
     assignment: deleteSubject,
@@ -106,7 +118,9 @@ const FormModal = ({
 
         useEffect(() => {
             if (state.success) {
-                toast(`${table} has been deleted!`)
+                toast(
+                    `${table.charAt(0).toUpperCase() + table.slice(1)} has been deleted!`
+                )
                 setOpen(false)
                 router.refresh()
             }

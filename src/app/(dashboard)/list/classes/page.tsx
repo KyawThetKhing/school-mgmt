@@ -4,13 +4,13 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import FormModal from '@/components/FormModal'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { Class, Grade, Prisma, Teacher } from '@prisma/client'
+import { Class, Prisma, Teacher, Grade } from '@prisma/client'
 import { role } from '@/lib/utils'
+import FormContainer from '@/components/FormContainer'
 
-type ClassList = Class & { supervisor: Teacher }
+type ClassList = Class & { supervisor: Teacher; grade: Grade }
 
 const columns = [
     {
@@ -50,14 +50,18 @@ const renderRow = (row: ClassList) => {
         >
             <td className="p-4">{row.name}</td>
             <td className="hidden p-4 md:table-cell">{row.capacity}</td>
-            <td className="hidden p-4 md:table-cell">{row.name[0]}</td>
+            <td className="hidden p-4 md:table-cell">{row.grade.level}</td>
             <td className="hidden p-4 md:table-cell">{row.supervisor.name}</td>
             <td>
                 <div className="flex items-center gap-2">
                     {role === 'admin' && (
                         <>
-                            <FormModal table="class" type="update" data={row} />
-                            <FormModal
+                            <FormContainer
+                                table="class"
+                                type="update"
+                                data={row}
+                            />
+                            <FormContainer
                                 table="class"
                                 type="delete"
                                 id={row.id}
@@ -126,6 +130,7 @@ const StudentListPage = async ({
             where: query,
             include: {
                 supervisor: true,
+                grade: true,
             },
             take: ITEM_PER_PAGE,
             skip: (p - 1) * ITEM_PER_PAGE,
@@ -162,7 +167,7 @@ const StudentListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="class" type="create" />
+                            <FormContainer table="class" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"

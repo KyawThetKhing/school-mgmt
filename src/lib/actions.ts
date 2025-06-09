@@ -1,6 +1,6 @@
 'use server'
 import { revalidatePath } from 'next/cache'
-import { SubjectInputs } from './formValidationSchema'
+import { ClassInputs, SubjectInputs } from './formValidationSchema'
 import { prisma } from './prisma'
 
 type CurrentState = { success: boolean; error: boolean }
@@ -58,6 +58,69 @@ export const deleteSubject = async (
     const id = data.get('id') as string
     try {
         await prisma.subject.delete({
+            where: {
+                id: parseInt(id),
+            },
+        })
+
+        // revalidatePath("/list/subjects");
+        return { success: true, error: false }
+    } catch (err) {
+        console.log(err)
+        return { success: false, error: true }
+    }
+}
+
+export const createClass = async (
+    currentState: CurrentState,
+    data: ClassInputs
+) => {
+    console.log('🚀 ~ actions.ts:78 ~ createClass:')
+    try {
+        await prisma.class.create({
+            data: {
+                name: data.name,
+                capacity: data.capacity,
+                supervisorId: data.supervisorId,
+                gradeId: data.gradeId,
+            },
+        })
+        return { success: true, error: false }
+    } catch {
+        return { success: false, error: true }
+    }
+}
+
+export const updateClass = async (
+    currentState: CurrentState,
+    data: ClassInputs
+) => {
+    console.log('🚀 ~ actions.ts:97 ~ updateClass:')
+    try {
+        await prisma.class.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                name: data.name,
+                capacity: data.capacity,
+                supervisorId: data.supervisorId,
+                gradeId: data.gradeId,
+            },
+        })
+        return { success: true, error: false }
+    } catch {
+        return { success: false, error: true }
+    }
+}
+
+export const deleteClass = async (
+    currentState: CurrentState,
+    data: FormData
+) => {
+    const id = data.get('id') as string
+    try {
+        await prisma.class.delete({
             where: {
                 id: parseInt(id),
             },
