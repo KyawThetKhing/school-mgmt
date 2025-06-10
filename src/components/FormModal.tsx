@@ -6,7 +6,7 @@ import { useFormState } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
-import { deleteClass, deleteSubject } from '@/lib/actions'
+import { deleteClass, deleteSubject, deleteTeacher } from '@/lib/actions'
 import { FormContainerProps } from './FormContainer'
 
 const TeacherForm = dynamic(() => import('./forms/TeacherForm'), {
@@ -44,7 +44,7 @@ const forms: {
             setOpen={setOpen}
             type={type}
             data={data}
-            // relatedData={relatedData}
+            relatedData={relatedData}
         />
     ),
     student: (setOpen, type, data, relatedData) => (
@@ -67,7 +67,7 @@ const forms: {
 
 const deleteActionMap = {
     subject: deleteSubject,
-    teacher: deleteSubject,
+    teacher: deleteTeacher,
     student: deleteSubject,
     parent: deleteSubject,
     class: deleteClass,

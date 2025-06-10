@@ -1,12 +1,44 @@
 import Announcements from '@/components/Announcements'
 import BigCalendar from '@/components/BigCalendar'
-import FormModal from '@/components/FormModal'
+import FormContainer from '@/components/FormContainer'
 import Performance from '@/components/Performance'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { prisma } from '@/lib/prisma'
+import { Teacher } from '@prisma/client'
+import { notFound } from 'next/navigation'
 
-const TeacherDetailPage = () => {
+const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
+    const { id } = params
+
+    const data:
+        | (Teacher & {
+              _count: {
+                  subjects: number
+                  lessons: number
+                  classes: number
+              }
+          })
+        | null = await prisma.teacher.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            _count: {
+                select: {
+                    subjects: true,
+                    lessons: true,
+                    classes: true,
+                },
+            },
+        },
+    })
+
+    if (!data) {
+        return notFound()
+    }
+
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
             {/* LEFT */}
@@ -17,7 +49,7 @@ const TeacherDetailPage = () => {
                     <div className="flex flex-1 gap-4 rounded-md bg-sky px-4 py-6">
                         <div className="w-1/3">
                             <Image
-                                src="https://images.pexels.com/photos/301952/pexels-photo-301952.jpeg?cs=srgb&dl=pexels-pixabay-301952.jpg&fm=jpg"
+                                src={data.img || '/avatar.png'}
                                 alt="avatar"
                                 width={144}
                                 height={144}
@@ -27,29 +59,16 @@ const TeacherDetailPage = () => {
                         <div className="flex w-2/3 flex-col justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <h1 className="text-xl font-semibold">
-                                    Leonard Shyam
+                                    {data.name + ' ' + data.surname}
                                 </h1>
-                                <FormModal
+                                <FormContainer
                                     table="teacher"
                                     type="update"
-                                    data={{
-                                        id: 1,
-                                        username: 'leonard',
-                                        email: 'leonard@gmail.com',
-                                        password: '12345678',
-                                        firstName: 'Leonard',
-                                        lastName: 'Shyam',
-                                        phone: '12345678',
-                                        address: '123 Main St',
-                                        bloodType: 'A+',
-                                        birthday: '2000-01-01',
-                                        sex: 'male',
-                                        img: 'https://images.pexels.com/photos/301952/pexels-photo-301952.jpeg?cs=srgb&dl=pexels-pixabay-301952.jpg&fm=jpg',
-                                    }}
+                                    data={data}
                                 />
                             </div>
                             <p className="text-sm text-gray-500">
-                                Lorem ipsum, dolor sit amet consec
+                                {data.address}
                             </p>
                             <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
@@ -59,7 +78,7 @@ const TeacherDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>A+</p>
+                                    <p>{data.bloodType}</p>
                                 </div>
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
                                     <Image
@@ -68,7 +87,11 @@ const TeacherDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>January 2025</p>
+                                    <p>
+                                        {Intl.DateTimeFormat('en-US').format(
+                                            data.birthday
+                                        )}
+                                    </p>
                                 </div>
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
                                     <Image
@@ -77,7 +100,7 @@ const TeacherDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>user@gmail.com</p>
+                                    <p>{data.email || '-'}</p>
                                 </div>
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
                                     <Image
@@ -86,7 +109,7 @@ const TeacherDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>+95977777777</p>
+                                    <p>{data.phone || '-'}</p>
                                 </div>
                             </div>
                         </div>
@@ -120,7 +143,9 @@ const TeacherDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">6</h1>
+                                <h1 className="text-xl font-semibold">
+                                    {data._count.lessons || '-'}
+                                </h1>
                                 <p className="text-sm text-gray-400">Lessons</p>
                             </div>
                         </div>
@@ -135,7 +160,9 @@ const TeacherDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">2</h1>
+                                <h1 className="text-xl font-semibold">
+                                    {data._count.subjects || '-'}
+                                </h1>
                                 <p className="text-sm text-gray-400">
                                     Branches
                                 </p>
@@ -152,7 +179,9 @@ const TeacherDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">6</h1>
+                                <h1 className="text-xl font-semibold">
+                                    {data._count.classes || '-'}
+                                </h1>
                                 <p className="text-sm text-gray-400">Classes</p>
                             </div>
                         </div>

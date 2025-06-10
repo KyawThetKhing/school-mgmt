@@ -7,9 +7,9 @@ import TableSearch from '@/components/TableSearch'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import { role } from '@/lib/utils'
-import FormModal from '@/components/FormModal'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import FormContainer from '@/components/FormContainer'
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] }
 const columns = [
@@ -94,7 +94,7 @@ const renderRow = (row: TeacherList) => {
                                     />
                                 </button>
                             </Link>
-                            <FormModal
+                            <FormContainer
                                 table="teacher"
                                 type="delete"
                                 id={row.id}
@@ -182,7 +182,7 @@ const TeacherListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="teacher" type="create" />
+                            <FormContainer table="teacher" type="create" />
                         )}
                     </div>
                 </div>

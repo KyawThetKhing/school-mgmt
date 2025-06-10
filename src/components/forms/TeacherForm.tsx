@@ -1,73 +1,86 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import Image from 'next/image'
 import InputField from '../InputField'
-
-const schema = z.object({
-    username: z
-        .string()
-        .min(3, { message: 'Username must be at least 3 characters long!' })
-        .max(20, { message: 'Username must be at most 20 characters long!' }),
-    email: z.string().email({ message: 'Invalid email address!' }),
-    password: z
-        .string()
-        .min(8, { message: 'Password must be at least 8 characters long!' }),
-    firstName: z.string().min(1, { message: 'First name is required!' }),
-    lastName: z.string().min(1, { message: 'Last name is required!' }),
-    phone: z.string().min(1, { message: 'Phone is required!' }),
-    address: z.string().min(1, { message: 'Address is required!' }),
-    bloodType: z.string().min(1, { message: 'Blood Type is required!' }),
-    birthday: z.date({ message: 'Birthday is required!' }),
-    sex: z.enum(['male', 'female'], { message: 'Sex is required!' }),
-    img: z.instanceof(File, { message: 'Image is required' }),
-})
-
-type Inputs = z.infer<typeof schema>
+import { TeacherInputs, teacherSchema } from '@/lib/formValidationSchema'
+import { useFormState } from 'react-dom'
+import { createTeacher, updateTeacher } from '@/lib/actions'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
+import { CldUploadWidget } from 'next-cloudinary'
 
 const TecherForm = ({
     setOpen,
     type,
     data,
+    relatedData,
 }: {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     type: 'create' | 'update'
     data?: any
+    relatedData?: any
 }) => {
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Inputs>({
-        resolver: zodResolver(schema),
+    } = useForm<TeacherInputs>({
+        resolver: zodResolver(teacherSchema),
     })
+    const [img, setImg] = useState<any>('')
+
+    const router = useRouter()
+
+    const [state, formAction] = useFormState(
+        type === 'create' ? createTeacher : updateTeacher,
+        { success: false, error: false }
+    )
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data)
+        formAction({ ...data, img: img?.secure_url })
     })
+
+    useEffect(() => {
+        if (state.success) {
+            setOpen(false)
+            toast.success(
+                `Teacher has been ${type === 'create' ? 'created' : 'updated'} successfully!`
+            )
+            router.refresh()
+        }
+    }, [state, setOpen, router, type])
 
     return (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-            <h1 className="text-xl font-semibold">Create a new teacher</h1>
+            <h1 className="text-xl font-semibold">
+                {type === 'create' ? 'Create a new teacher' : 'Update teacher'}
+            </h1>
+
+            {state.error && (
+                <p className="text-red-500">Something went wrong</p>
+            )}
             <span className="text-xs font-medium text-gray-400">
                 Authentication Information
             </span>
             <div className="flex flex-wrap justify-between gap-4">
+                {data && (
+                    <InputField
+                        label="Id"
+                        name="id"
+                        defaultValue={data?.id}
+                        register={register}
+                        error={errors?.id}
+                        hidden
+                    />
+                )}
                 <InputField
                     label="Username"
                     name="username"
                     defaultValue={data?.username}
                     register={register}
                     error={errors?.username}
-                />
-                <InputField
-                    label="Email"
-                    name="email"
-                    defaultValue={data?.email}
-                    register={register}
-                    error={errors?.email}
                 />
                 <InputField
                     label="Password"
@@ -77,32 +90,39 @@ const TecherForm = ({
                     register={register}
                     error={errors?.password}
                 />
-            </div>
-            <span className="text-xs font-medium text-gray-400">
-                Personal Information
-            </span>
-            <div className="flex flex-wrap justify-between gap-4">
                 <InputField
-                    label="First Name"
-                    name="firstName"
-                    defaultValue={data?.firstName}
+                    label="Name"
+                    name="name"
+                    defaultValue={data?.name}
                     register={register}
-                    error={errors.firstName}
+                    error={errors?.name}
                 />
                 <InputField
-                    label="Last Name"
-                    name="lastName"
-                    defaultValue={data?.lastName}
+                    label="Surname"
+                    name="surname"
+                    defaultValue={data?.surname}
                     register={register}
-                    error={errors.lastName}
+                    error={errors?.surname}
+                />
+                <InputField
+                    label="Email"
+                    name="email"
+                    defaultValue={data?.email}
+                    register={register}
+                    error={errors?.email}
                 />
                 <InputField
                     label="Phone"
                     name="phone"
                     defaultValue={data?.phone}
                     register={register}
-                    error={errors.phone}
+                    error={errors?.phone}
                 />
+            </div>
+            <span className="text-xs font-medium text-gray-400">
+                Personal Information
+            </span>
+            <div className="flex flex-wrap justify-between gap-4">
                 <InputField
                     label="Address"
                     name="address"
@@ -117,14 +137,6 @@ const TecherForm = ({
                     register={register}
                     error={errors.bloodType}
                 />
-                <InputField
-                    label="Birthday"
-                    name="birthday"
-                    defaultValue={data?.birthday}
-                    register={register}
-                    error={errors.birthday}
-                    type="date"
-                />
                 <div className="flex w-full flex-col gap-2 md:w-1/4">
                     <label className="text-xs text-gray-500">Sex</label>
                     <select
@@ -132,8 +144,8 @@ const TecherForm = ({
                         {...register('sex')}
                         defaultValue={data?.sex}
                     >
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
                     </select>
                     {errors.sex?.message && (
                         <p className="text-xs text-red-400">
@@ -141,30 +153,60 @@ const TecherForm = ({
                         </p>
                     )}
                 </div>
-                <div className="flex w-full flex-col justify-center gap-2 md:w-1/4">
-                    <label
-                        className="flex cursor-pointer items-center gap-2 text-xs text-gray-500"
-                        htmlFor="img"
+                <InputField
+                    label="Birthday"
+                    name="birthday"
+                    defaultValue={data?.birthday?.toISOString().split('T')[0]}
+                    register={register}
+                    error={errors.birthday}
+                    type="date"
+                />
+                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                    <label className="text-xs text-gray-500">Subjects</label>
+                    <select
+                        multiple
+                        className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
+                        {...register('subjects')}
+                        defaultValue={data?.subjects}
                     >
-                        <Image
-                            src="/upload.png"
-                            alt=""
-                            width={28}
-                            height={28}
-                        />
-                        <span>Upload a photo</span>
-                    </label>
-                    <input
-                        type="file"
-                        id="img"
-                        {...register('img')}
-                        className="hidden"
-                    />
-                    {errors.img?.message && (
+                        {relatedData?.subjects?.map((subject: any) => (
+                            <option key={subject.id} value={subject.id}>
+                                {subject.name}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.subjects?.message && (
                         <p className="text-xs text-red-400">
-                            {errors.img.message.toString()}
+                            {errors.subjects.message.toString()}
                         </p>
                     )}
+                </div>
+
+                <div className="flex w-full flex-col justify-center gap-2 md:w-1/4">
+                    <CldUploadWidget
+                        uploadPreset="school"
+                        onSuccess={(result, { widget }) => {
+                            setImg(result?.info)
+                            widget.close()
+                        }}
+                    >
+                        {({ open }) => {
+                            return (
+                                <div
+                                    onClick={() => open()}
+                                    className="flex cursor-pointer items-center gap-2 text-xs text-gray-500"
+                                >
+                                    <Image
+                                        src="/upload.png"
+                                        alt=""
+                                        width={28}
+                                        height={28}
+                                    />
+                                    <span>Upload a photo</span>
+                                </div>
+                            )
+                        }}
+                    </CldUploadWidget>
                 </div>
             </div>
             <button className="rounded-md bg-blue-400 p-2 text-white">
