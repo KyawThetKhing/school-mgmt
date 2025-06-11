@@ -37,8 +37,6 @@ const ClassForm = ({
     )
 
     const onSubmit = handleSubmit((data) => {
-        console.log('🚀 ~ ClassForm.tsx:42 ~ onSubmit ~ data:', data)
-
         formAction(data)
     })
 

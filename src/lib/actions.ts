@@ -2,6 +2,7 @@
 import { revalidatePath } from 'next/cache'
 import {
     ClassInputs,
+    StudentInputs,
     SubjectInputs,
     TeacherInputs,
 } from './formValidationSchema'
@@ -177,7 +178,6 @@ export const createTeacher = async (
         })
         return { success: true, error: false }
     } catch (error) {
-        console.log('🚀 ~ actions.ts:179 ~ error:', error)
         return { success: false, error: true }
     }
 }
@@ -222,7 +222,6 @@ export const updateTeacher = async (
         })
         return { success: true, error: false }
     } catch (error) {
-        console.log('🚀 ~ actions.ts:225 ~ error:', error)
         return { success: false, error: true }
     }
 }
@@ -232,8 +231,130 @@ export const deleteTeacher = async (
     data: FormData
 ) => {
     const id = data.get('id') as string
+    await clerkClient.users.deleteUser(id)
     try {
         await prisma.teacher.delete({
+            where: {
+                id: id,
+            },
+        })
+
+        // revalidatePath("/list/subjects");
+        return { success: true, error: false }
+    } catch (err) {
+        console.log(err)
+        return { success: false, error: true }
+    }
+}
+
+export const createStudent = async (
+    currentState: CurrentState,
+    data: StudentInputs
+) => {
+    try {
+        const classItem = await prisma.class.findUnique({
+            where: {
+                id: parseInt(data.classId),
+            },
+            include: {
+                _count: {
+                    select: { students: true },
+                },
+            },
+        })
+
+        if (classItem && classItem?._count.students === classItem?.capacity) {
+            return { success: false, error: true }
+        }
+
+        const { password, ...rest } = data
+        console.log('Data', data)
+        //create user in clerk
+        const user = await clerkClient().users.createUser({
+            username: data.username,
+            password: data.password,
+            firstName: data.name,
+            lastName: data.surname,
+            emailAddress: [data.email || ''],
+            publicMetadata: {
+                role: 'student',
+            },
+        })
+
+        //create user in prisma
+        await prisma.student.create({
+            data: {
+                id: user.id,
+                username: data.username,
+                email: data.email,
+                name: data.name,
+                surname: data.surname,
+                phone: data.phone,
+                address: data.address,
+                bloodType: data.bloodType,
+                birthday: data.birthday,
+                sex: data.sex,
+                parentId: data.parentId,
+                classId: parseInt(data.classId),
+                gradeId: parseInt(data.gradeId),
+                img: data.img,
+            },
+        })
+        return { success: true, error: false }
+    } catch (error) {
+        return { success: false, error: true }
+    }
+}
+
+export const updateStudent = async (
+    currentState: CurrentState,
+    data: StudentInputs
+) => {
+    if (!data.id) return { success: false, error: true }
+    try {
+        const user = await clerkClient().users.updateUser(data.id, {
+            username: data.username,
+            firstName: data.name,
+            lastName: data.surname,
+            ...(data.password && { password: data.password }),
+            // emailAddress: data.email,
+        })
+
+        await prisma.student.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                id: user.id,
+                username: data.username,
+                email: data.email,
+                name: data.name,
+                surname: data.surname,
+                phone: data.phone,
+                address: data.address,
+                bloodType: data.bloodType,
+                birthday: data.birthday,
+                sex: data.sex,
+                parentId: data.parentId,
+                classId: parseInt(data.classId),
+                gradeId: parseInt(data.gradeId),
+                img: data.img,
+            },
+        })
+        return { success: true, error: false }
+    } catch {
+        return { success: false, error: true }
+    }
+}
+
+export const deleteStudent = async (
+    currentState: CurrentState,
+    data: FormData
+) => {
+    const id = data.get('id') as string
+    await clerkClient.users.deleteUser(id)
+    try {
+        await prisma.student.delete({
             where: {
                 id: id,
             },

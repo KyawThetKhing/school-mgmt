@@ -6,7 +6,7 @@ import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import Link from 'next/link'
 import { role } from '@/lib/utils'
-import FormModal from '@/components/FormModal'
+import FormContainer from '@/components/FormContainer'
 import { prisma } from '@/lib/prisma'
 import { Prisma, Student, Class } from '@prisma/client'
 import { ITEM_PER_PAGE } from '@/lib/settings'
@@ -63,7 +63,9 @@ const renderRow = (row: StudentList) => {
                     className="h-10 w-10 rounded-full object-cover md:hidden xl:block"
                 />
                 <div className="flex flex-col">
-                    <h3 className="font-semibold">{row.name}</h3>
+                    <h3 className="font-semibold">
+                        {row.name + ' ' + row.surname}
+                    </h3>
                     <p className="text-sm text-gray-500">{row?.class.name}</p>
                 </div>
             </td>
@@ -85,7 +87,7 @@ const renderRow = (row: StudentList) => {
                                     />
                                 </button>
                             </Link>
-                            <FormModal
+                            <FormContainer
                                 table="student"
                                 type="delete"
                                 id={row.id}
@@ -175,7 +177,7 @@ const StudentListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal type="create" table="student" />
+                            <FormContainer type="create" table="student" />
                         )}
                     </div>
                 </div>

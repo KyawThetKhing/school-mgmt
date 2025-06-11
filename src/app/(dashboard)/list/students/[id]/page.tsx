@@ -1,11 +1,35 @@
 import Announcements from '@/components/Announcements'
-import BigCalendar from '@/components/BigCalendar'
+import FormContainer from '@/components/FormContainer'
+import StudentAttendanceCard from '@/components/StudentAttendanceCard'
 import Performance from '@/components/Performance'
+import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
+import BigCalendarContainer from '@/components/BigCalendarContainer'
 
-const StudentDetailPage = () => {
+const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
+    const { id } = params
+    const data = await prisma.student.findUnique({
+        where: {
+            id: id,
+        },
+        include: {
+            class: {
+                include: {
+                    lessons: true,
+                },
+            },
+            grade: true,
+            attendances: true,
+        },
+    })
+    console.log('🚀 ~ page.tsx:26 ~ StudentDetailPage ~ data:', data)
+
+    if (!data) {
+        return notFound()
+    }
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
             {/* LEFT */}
@@ -16,7 +40,7 @@ const StudentDetailPage = () => {
                     <div className="flex flex-1 gap-4 rounded-md bg-sky px-4 py-6">
                         <div className="w-1/3">
                             <Image
-                                src="https://images.pexels.com/photos/301952/pexels-photo-301952.jpeg?cs=srgb&dl=pexels-pixabay-301952.jpg&fm=jpg"
+                                src={data?.img || '/avatar.png'}
                                 alt="avatar"
                                 width={144}
                                 height={144}
@@ -24,9 +48,18 @@ const StudentDetailPage = () => {
                             />
                         </div>
                         <div className="flex w-2/3 flex-col justify-between gap-4">
-                            <h1 className="text-xl font-semibold">John Doe</h1>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-xl font-semibold">
+                                    {data?.name + ' ' + data?.surname}
+                                </h1>
+                                <FormContainer
+                                    table="student"
+                                    type="update"
+                                    data={data}
+                                />
+                            </div>
                             <p className="text-sm text-gray-500">
-                                Lorem ipsum, dolor sit amet consec
+                                {data?.address}
                             </p>
                             <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
@@ -36,7 +69,7 @@ const StudentDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>A+</p>
+                                    <p>{data?.bloodType}</p>
                                 </div>
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
                                     <Image
@@ -45,7 +78,11 @@ const StudentDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>January 2025</p>
+                                    <p>
+                                        {Intl.DateTimeFormat('en-US').format(
+                                            data?.birthday
+                                        )}
+                                    </p>
                                 </div>
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
                                     <Image
@@ -54,7 +91,7 @@ const StudentDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>user@gmail.com</p>
+                                    <p>{data?.email || '-'}</p>
                                 </div>
                                 <div className="flex w-full items-center gap-2 md:w-1/3 lg:w-full 2xl:w-1/3">
                                     <Image
@@ -63,7 +100,7 @@ const StudentDetailPage = () => {
                                         width={14}
                                         height={14}
                                     />
-                                    <p>+95977777777</p>
+                                    <p>{data?.phone || '-'}</p>
                                 </div>
                             </div>
                         </div>
@@ -80,10 +117,7 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">90%</h1>
-                                <p className="text-sm text-gray-400">
-                                    Attendance
-                                </p>
+                                <StudentAttendanceCard id={id} />
                             </div>
                         </div>
 
@@ -97,7 +131,9 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">18</h1>
+                                <h1 className="text-xl font-semibold">
+                                    {data?.class?.lessons?.length || 0}
+                                </h1>
                                 <p className="text-sm text-gray-400">Lessons</p>
                             </div>
                         </div>
@@ -112,7 +148,9 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">6th</h1>
+                                <h1 className="text-xl font-semibold">
+                                    {data?.grade?.level || '-'}
+                                </h1>
                                 <p className="text-sm text-gray-400">Grade</p>
                             </div>
                         </div>
@@ -127,7 +165,9 @@ const StudentDetailPage = () => {
                                 className="h-6 w-6"
                             />
                             <div>
-                                <h1 className="text-xl font-semibold">6A</h1>
+                                <h1 className="text-xl font-semibold">
+                                    {data?.class?.name || '-'}
+                                </h1>
                                 <p className="text-sm text-gray-400">Class</p>
                             </div>
                         </div>
@@ -136,7 +176,7 @@ const StudentDetailPage = () => {
                 {/* BOTTOM */}
                 <div className="mt-4 h-[800px] rounded-md bg-white p-4">
                     <h1> Teacher&apos;s Schedule</h1>
-                    <BigCalendar />
+                    <BigCalendarContainer type="classId" id={data?.class?.id} />
                 </div>
             </div>
             {/* RIGHT */}
@@ -173,7 +213,7 @@ const StudentDetailPage = () => {
                         </Link>
                         <Link
                             className="rounded-md bg-skyLight p-3"
-                            href={`/list/results?studentId=student2`}
+                            href={`/list/results?studentId=${id}`}
                         >
                             Student&apos;s Results
                         </Link>
