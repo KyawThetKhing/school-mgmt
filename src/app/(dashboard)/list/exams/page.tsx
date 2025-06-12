@@ -4,12 +4,11 @@ import TableSearch from '@/components/TableSearch'
 import Image from 'next/image'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import Link from 'next/link'
 import { currentUserId, role } from '@/lib/utils'
-import FormModal from '@/components/FormModal'
 import { Class, Exam, Prisma, Subject, Teacher } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import FormContainer from '@/components/FormContainer'
 
 type ExamList = Exam & {
     lesson: {
@@ -20,6 +19,10 @@ type ExamList = Exam & {
 }
 
 const columns = [
+    {
+        header: 'Title',
+        accessor: 'title',
+    },
     {
         header: 'Subject',
         accessor: 'subject',
@@ -54,6 +57,7 @@ const renderRow = (row: ExamList) => {
             key={row.id}
             className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
         >
+            <td className="p-4">{row.title}</td>
             <td className="p-4">{row.lesson.subject.name}</td>
             <td>{row.lesson.class.name}</td>
             <td className="hidden p-4 md:table-cell">
@@ -66,8 +70,16 @@ const renderRow = (row: ExamList) => {
                 <div className="flex items-center gap-2">
                     {(role === 'admin' || role === 'teacher') && (
                         <>
-                            <FormModal table="exam" type="update" data={row} />
-                            <FormModal table="exam" type="delete" id={row.id} />
+                            <FormContainer
+                                table="exam"
+                                type="update"
+                                data={row}
+                            />
+                            <FormContainer
+                                table="exam"
+                                type="delete"
+                                id={row.id}
+                            />
                         </>
                     )}
                     {/*                         
@@ -205,7 +217,7 @@ const ExamListPage = async ({
                             />
                         </button>
                         {(role === 'admin' || role === 'teacher') && (
-                            <FormModal table="exam" type="create" />
+                            <FormContainer table="exam" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"
