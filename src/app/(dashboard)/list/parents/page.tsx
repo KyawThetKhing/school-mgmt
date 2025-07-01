@@ -106,7 +106,7 @@ const renderRow = (row: ParentList) => {
     )
 }
 
-const StudentListPage = async ({
+const ParentListPage = async ({
     searchParams,
 }: {
     searchParams: { [key: string]: string | undefined }
@@ -203,4 +203,4 @@ const StudentListPage = async ({
     )
 }
 
-export default StudentListPage
+export default ParentListPage

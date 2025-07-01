@@ -155,6 +155,7 @@ const TeacherListPage = async ({
             where: query,
         }),
     ])
+
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
             {/* TOP */}

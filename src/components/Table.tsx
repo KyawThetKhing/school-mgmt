@@ -20,7 +20,20 @@ const Table = ({
                     ))}
                 </tr>
             </thead>
-            <tbody>{data.map((row) => renderRow(row))}</tbody>
+            {data.length > 0 ? (
+                <tbody>{data.map((row) => renderRow(row))}</tbody>
+            ) : (
+                <tbody>
+                    <tr>
+                        <td
+                            colSpan={columns.length}
+                            className="p-4 text-center text-gray-500"
+                        >
+                            No data available
+                        </td>
+                    </tr>
+                </tbody>
+            )}
         </table>
     )
 }
