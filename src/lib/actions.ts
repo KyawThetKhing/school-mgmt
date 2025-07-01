@@ -270,7 +270,6 @@ export const createStudent = async (
         }
 
         const { password, ...rest } = data
-        console.log('Data', data)
         //create user in clerk
         const user = await clerkClient().users.createUser({
             username: data.username,
@@ -439,7 +438,6 @@ export const deleteExam = async (
     data: FormData
 ) => {
     const id = data.get('id') as string
-    console.log('🚀 ~ actions.ts:442 ~ id:', id)
     try {
         await prisma.exam.delete({
             where: {

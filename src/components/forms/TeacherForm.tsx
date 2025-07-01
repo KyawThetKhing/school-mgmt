@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import InputField from '../InputField'
@@ -10,6 +10,10 @@ import { createTeacher, updateTeacher } from '@/lib/actions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { CldUploadWidget } from 'next-cloudinary'
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated'
+
+const animatedComponents = makeAnimated()
 
 const TecherForm = ({
     setOpen,
@@ -22,14 +26,21 @@ const TecherForm = ({
     data?: any
     relatedData?: any
 }) => {
+    const defaultTeacher = {
+        ...data,
+        subjects: data?.subjects?.map((subject: any) => String(subject.id)),
+    }
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<TeacherInputs>({
         resolver: zodResolver(teacherSchema),
+        defaultValues: defaultTeacher,
     })
     const [img, setImg] = useState<any>('')
+    const [subjectOptions, setSubjectOptions] = useState<any>([])
 
     const router = useRouter()
 
@@ -52,11 +63,24 @@ const TecherForm = ({
         }
     }, [state, setOpen, router, type])
 
+    useEffect(() => {
+        if (relatedData?.subjects) {
+            const formattedSubjects = relatedData?.subjects.map(
+                (subject: any) => ({
+                    value: subject.id,
+                    label: subject.name,
+                })
+            )
+            setSubjectOptions(formattedSubjects)
+        }
+    }, [relatedData])
+
     return (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
             <h1 className="text-xl font-semibold">
                 {type === 'create' ? 'Create a new teacher' : 'Update teacher'}
             </h1>
+            <p>{errors.subjects?.message?.toString()}</p>
 
             {state.error && (
                 <p className="text-red-500">Something went wrong</p>
@@ -163,18 +187,35 @@ const TecherForm = ({
                 />
                 <div className="flex w-full flex-col gap-2 md:w-1/4">
                     <label className="text-xs text-gray-500">Subjects</label>
-                    <select
-                        multiple
-                        className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
-                        {...register('subjects')}
-                        defaultValue={data?.subjects}
-                    >
-                        {relatedData?.subjects?.map((subject: any) => (
-                            <option key={subject.id} value={subject.id}>
-                                {subject.name}
-                            </option>
-                        ))}
-                    </select>
+
+                    <Controller
+                        name="subjects"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                {...field}
+                                isMulti
+                                options={subjectOptions}
+                                components={animatedComponents}
+                                value={subjectOptions.filter(
+                                    (option: {
+                                        value: string
+                                        label: string
+                                    }) =>
+                                        field.value?.includes(
+                                            String(option.value)
+                                        )
+                                )}
+                                onChange={(val) => {
+                                    const selectedValues =
+                                        val?.map((v: any) => String(v.value)) ||
+                                        []
+                                    field.onChange(selectedValues)
+                                }}
+                            />
+                        )}
+                    />
+
                     {errors.subjects?.message && (
                         <p className="text-xs text-red-400">
                             {errors.subjects.message.toString()}

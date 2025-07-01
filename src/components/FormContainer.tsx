@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import FormModal from './FormModal'
-import { role, currentUserId } from '@/lib/utils'
+import { currentUser } from '@clerk/nextjs/server'
 
 export type FormContainerProps = {
     table:
@@ -22,6 +22,8 @@ export type FormContainerProps = {
 }
 const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
     let relatedData = {}
+    const user = await currentUser()
+    const role = (user?.publicMetadata as { role: string })?.role
 
     if (type !== 'delete') {
         switch (table) {
@@ -76,9 +78,7 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
             case 'exam':
                 const examLessons = await prisma.lesson.findMany({
                     where: {
-                        ...(role === 'teacher'
-                            ? { teacherId: currentUserId! }
-                            : {}),
+                        ...(role === 'teacher' ? { teacherId: user?.id! } : {}),
                     },
                     select: { id: true, name: true, teacher: true },
                 })

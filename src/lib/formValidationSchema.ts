@@ -42,7 +42,7 @@ export const teacherSchema = z.object({
     sex: z.enum(['MALE', 'FEMALE'], { message: 'Sex is required!' }),
     birthday: z.coerce.date({ message: 'Birthday is required!' }),
     img: z.string().optional(),
-    subjects: z.array(z.string()).optional(),
+    subjects: z.array(z.any()).optional(),
 })
 
 export type TeacherInputs = z.infer<typeof teacherSchema>

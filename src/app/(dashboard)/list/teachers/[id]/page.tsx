@@ -25,6 +25,9 @@ const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
             id: id,
         },
         include: {
+            subjects: true,
+            lessons: true,
+            classes: true,
             _count: {
                 select: {
                     subjects: true,
