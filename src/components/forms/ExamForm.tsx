@@ -35,6 +35,7 @@ const ExamForm = ({
         {
             success: false,
             error: false,
+            message: '',
         }
     )
 
@@ -60,7 +61,9 @@ const ExamForm = ({
                 {type === 'create' ? 'Create a new exam' : 'Update exam'}
             </h1>
             {state.error && (
-                <p className="text-red-500">Something went wrong</p>
+                <p className="text-red-500">
+                    {state.message || 'Something went wrong'}
+                </p>
             )}
 
             <div className="flex flex-wrap justify-between gap-4">

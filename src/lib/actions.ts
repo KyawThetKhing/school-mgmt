@@ -10,13 +10,14 @@ import {
 import { prisma } from './prisma'
 import { clerkClient } from '@clerk/nextjs/server'
 import { currentUserId, role } from './utils'
+import { errorHandling } from './errorHandling'
 
 type CurrentState = { success: boolean; error: boolean }
 
 export const createSubject = async (
     currentState: CurrentState,
     data: SubjectInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         await prisma.subject.create({
             data: {
@@ -31,14 +32,14 @@ export const createSubject = async (
         // revalidatePath('/list/subjects')
         return { success: true, error: false }
     } catch (error) {
-        return { success: false, error: true }
+        return errorHandling(error)
     }
 }
 
 export const updateSubject = async (
     currentState: CurrentState,
     data: SubjectInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         await prisma.subject.update({
             where: {
@@ -54,15 +55,15 @@ export const updateSubject = async (
             },
         })
         return { success: true, error: false }
-    } catch {
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const deleteSubject = async (
     currentState: CurrentState,
     data: FormData
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     const id = data.get('id') as string
     try {
         await prisma.subject.delete({
@@ -73,16 +74,15 @@ export const deleteSubject = async (
 
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
-    } catch (err) {
-        console.log(err)
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const createClass = async (
     currentState: CurrentState,
     data: ClassInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         await prisma.class.create({
             data: {
@@ -93,15 +93,15 @@ export const createClass = async (
             },
         })
         return { success: true, error: false }
-    } catch {
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const updateClass = async (
     currentState: CurrentState,
     data: ClassInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         await prisma.class.update({
             where: {
@@ -115,15 +115,15 @@ export const updateClass = async (
             },
         })
         return { success: true, error: false }
-    } catch {
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const deleteClass = async (
     currentState: CurrentState,
     data: FormData
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     const id = data.get('id') as string
     try {
         await prisma.class.delete({
@@ -134,16 +134,15 @@ export const deleteClass = async (
 
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
-    } catch (err) {
-        console.log(err)
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const createTeacher = async (
     currentState: CurrentState,
     data: TeacherInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         //create user in clerk
         const user = await clerkClient().users.createUser({
@@ -180,14 +179,14 @@ export const createTeacher = async (
         })
         return { success: true, error: false }
     } catch (error) {
-        return { success: false, error: true }
+        return errorHandling(error)
     }
 }
 
 export const updateTeacher = async (
     currentState: CurrentState,
     data: TeacherInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     if (!data.id) return { success: false, error: true }
     try {
         const user = await clerkClient().users.updateUser(data.id, {
@@ -224,14 +223,14 @@ export const updateTeacher = async (
         })
         return { success: true, error: false }
     } catch (error) {
-        return { success: false, error: true }
+        return errorHandling(error)
     }
 }
 
 export const deleteTeacher = async (
     currentState: CurrentState,
     data: FormData
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     const id = data.get('id') as string
     await clerkClient.users.deleteUser(id)
     try {
@@ -243,16 +242,15 @@ export const deleteTeacher = async (
 
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
-    } catch (err) {
-        console.log(err)
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const createStudent = async (
     currentState: CurrentState,
     data: StudentInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         const classItem = await prisma.class.findUnique({
             where: {
@@ -303,14 +301,14 @@ export const createStudent = async (
         })
         return { success: true, error: false }
     } catch (error) {
-        return { success: false, error: true }
+        return errorHandling(error)
     }
 }
 
 export const updateStudent = async (
     currentState: CurrentState,
     data: StudentInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     if (!data.id) return { success: false, error: true }
     try {
         const user = await clerkClient().users.updateUser(data.id, {
@@ -343,15 +341,15 @@ export const updateStudent = async (
             },
         })
         return { success: true, error: false }
-    } catch {
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const deleteStudent = async (
     currentState: CurrentState,
     data: FormData
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     const id = data.get('id') as string
     await clerkClient.users.deleteUser(id)
     try {
@@ -363,16 +361,15 @@ export const deleteStudent = async (
 
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
-    } catch (err) {
-        console.log(err)
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const createExam = async (
     currentState: CurrentState,
     data: ExamInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         if (role === 'teacher') {
             const teacherLesson = await prisma.lesson.findFirst({
@@ -396,14 +393,14 @@ export const createExam = async (
         // revalidatePath('/list/subjects')
         return { success: true, error: false }
     } catch (error) {
-        return { success: false, error: true }
+        return errorHandling(error)
     }
 }
 
 export const updateExam = async (
     currentState: CurrentState,
     data: ExamInputs
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         if (role === 'teacher') {
             const teacherLesson = await prisma.lesson.findFirst({
@@ -428,15 +425,15 @@ export const updateExam = async (
             },
         })
         return { success: true, error: false }
-    } catch {
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }
 
 export const deleteExam = async (
     currentState: CurrentState,
     data: FormData
-) => {
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
     const id = data.get('id') as string
     try {
         await prisma.exam.delete({
@@ -450,8 +447,7 @@ export const deleteExam = async (
 
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
-    } catch (err) {
-        console.log(err)
-        return { success: false, error: true }
+    } catch (error) {
+        return errorHandling(error)
     }
 }

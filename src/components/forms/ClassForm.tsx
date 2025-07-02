@@ -33,6 +33,7 @@ const ClassForm = ({
         {
             success: false,
             error: false,
+            message: '',
         }
     )
 
@@ -61,7 +62,9 @@ const ClassForm = ({
                 </h1>
             </div>
             {state.error && (
-                <p className="text-red-500">Something went wrong</p>
+                <p className="text-red-500">
+                    {state.message || 'Something went wrong'}
+                </p>
             )}
             {/* Form */}
             <form onSubmit={onSubmit} className="flex flex-col gap-4">

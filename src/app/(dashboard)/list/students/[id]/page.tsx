@@ -25,7 +25,6 @@ const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
             attendances: true,
         },
     })
-    console.log('🚀 ~ page.tsx:26 ~ StudentDetailPage ~ data:', data)
 
     if (!data) {
         return notFound()

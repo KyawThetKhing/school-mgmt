@@ -46,7 +46,7 @@ const TecherForm = ({
 
     const [state, formAction] = useFormState(
         type === 'create' ? createTeacher : updateTeacher,
-        { success: false, error: false }
+        { success: false, error: false, message: '' }
     )
 
     const onSubmit = handleSubmit((data) => {
@@ -83,7 +83,9 @@ const TecherForm = ({
             <p>{errors.subjects?.message?.toString()}</p>
 
             {state.error && (
-                <p className="text-red-500">Something went wrong</p>
+                <p className="text-red-500">
+                    {state.message || 'Something went wrong'}
+                </p>
             )}
             <span className="text-xs font-medium text-gray-400">
                 Authentication Information

@@ -38,6 +38,7 @@ const StudentForm = ({
         {
             success: false,
             error: false,
+            message: '',
         }
     )
     const onSubmit = handleSubmit((data) => {
@@ -60,7 +61,9 @@ const StudentForm = ({
                 {type === 'create' ? 'Create a new student' : 'Update student'}
             </h1>
             {state.error && (
-                <p className="text-red-500">Something went wrong</p>
+                <p className="text-red-500">
+                    {state.message || 'Something went wrong'}
+                </p>
             )}
             <span className="text-xs font-medium text-gray-400">
                 Authentication Information
@@ -234,7 +237,6 @@ const StudentForm = ({
                 <CldUploadWidget
                     uploadPreset="school"
                     onSuccess={(result) => {
-                        console.log(result)
                         setImg(result)
                     }}
                 >

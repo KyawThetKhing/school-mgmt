@@ -35,6 +35,7 @@ const SubjectForm = ({
         {
             success: false,
             error: false,
+            message: '',
         }
     )
 
@@ -61,7 +62,9 @@ const SubjectForm = ({
             </h1>
 
             {state.error && (
-                <p className="text-red-500">Something went wrong</p>
+                <p className="text-red-500">
+                    {state.message || 'Something went wrong'}
+                </p>
             )}
 
             <div className="flex flex-wrap justify-between gap-4">
