@@ -1,3 +1,5 @@
+import path from 'path'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
@@ -6,11 +8,6 @@ const nextConfig = {
             { hostname: 'res.cloudinary.com' },
         ],
         domains: ['images.pexels.com', 'res.cloudinary.com'],
-    },
-    webpack: (config) => {
-        config.resolve.alias['@'] = path.resolve(__dirname, 'src')
-        config.resolve.alias['~'] = path.resolve(__dirname, 'src')
-        return config
     },
 }
 

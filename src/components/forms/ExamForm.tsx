@@ -11,7 +11,6 @@ import { examSchema, ExamInputs } from '@/lib/formValidationSchema'
 
 import InputField from '../InputField'
 
-
 const ExamForm = ({
     setOpen,
     type,
@@ -67,7 +66,7 @@ const ExamForm = ({
                 </p>
             )}
 
-            <div className="flex flex-wrap justify-between gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 {data && (
                     <InputField
                         label="Id"
@@ -108,8 +107,8 @@ const ExamForm = ({
                     error={errors?.endTime}
                     type="datetime-local"
                 />
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
-                    <label className="text-xs text-gray-500">Sex</label>
+                <div className="flex w-full flex-col gap-2">
+                    <label className="text-xs text-gray-500">Lesson</label>
                     <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
                         {...register('lessonId')}

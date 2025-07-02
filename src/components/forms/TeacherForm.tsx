@@ -92,7 +92,7 @@ const TecherForm = ({
             <span className="text-xs font-medium text-gray-400">
                 Authentication Information
             </span>
-            <div className="flex flex-wrap justify-between gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 {data && (
                     <InputField
                         label="Id"
@@ -150,7 +150,7 @@ const TecherForm = ({
             <span className="text-xs font-medium text-gray-400">
                 Personal Information
             </span>
-            <div className="flex flex-wrap justify-between gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 <InputField
                     label="Address"
                     name="address"
@@ -165,7 +165,7 @@ const TecherForm = ({
                     register={register}
                     error={errors.bloodType}
                 />
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                <div className="flex w-full flex-col gap-2">
                     <label className="text-xs text-gray-500">Sex</label>
                     <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
@@ -189,9 +189,8 @@ const TecherForm = ({
                     error={errors.birthday}
                     type="date"
                 />
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                <div className="flex w-full flex-col gap-2">
                     <label className="text-xs text-gray-500">Subjects</label>
-
                     <Controller
                         name="subjects"
                         control={control}
@@ -227,7 +226,8 @@ const TecherForm = ({
                     )}
                 </div>
 
-                <div className="flex w-full flex-col justify-center gap-2 md:w-1/4">
+                <div className="flex w-full flex-col items-center justify-center">
+                    <label className="opacity-0">Upload Image</label>
                     <CldUploadWidget
                         uploadPreset="school"
                         onSuccess={(result, { widget }) => {

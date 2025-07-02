@@ -1,4 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server'
+import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -9,7 +10,7 @@ const menuItems = [
             {
                 icon: '/home.png',
                 label: 'Home',
-                href: '/',
+                href: '/admin',
                 visible: ['admin', 'teacher', 'student', 'parent'],
             },
             {
@@ -66,24 +67,24 @@ const menuItems = [
                 href: '/list/results',
                 visible: ['admin', 'teacher', 'student', 'parent'],
             },
-            {
-                icon: '/attendance.png',
-                label: 'Attendance',
-                href: '/list/attendance',
-                visible: ['admin', 'teacher', 'student', 'parent'],
-            },
+            // {
+            //     icon: '/attendance.png',
+            //     label: 'Attendance',
+            //     href: '/list/attendance',
+            //     visible: ['admin', 'teacher', 'student', 'parent'],
+            // },
             {
                 icon: '/calendar.png',
                 label: 'Events',
                 href: '/list/events',
                 visible: ['admin', 'teacher', 'student', 'parent'],
             },
-            {
-                icon: '/message.png',
-                label: 'Messages',
-                href: '/list/messages',
-                visible: ['admin', 'teacher', 'student', 'parent'],
-            },
+            // {
+            //     icon: '/message.png',
+            //     label: 'Messages',
+            //     href: '/list/messages',
+            //     visible: ['admin', 'teacher', 'student', 'parent'],
+            // },
             {
                 icon: '/announcement.png',
                 label: 'Announcements',
@@ -120,6 +121,9 @@ const menuItems = [
 const Menu = async () => {
     const user = await currentUser()
     const role = (user?.publicMetadata as { role: string })?.role
+
+    const pathname = headers().get('x-next-url')
+
     return (
         <div className="mt-4 text-sm">
             {menuItems.map((i) => (
@@ -128,12 +132,15 @@ const Menu = async () => {
                         {i.title}
                     </span>
                     {i.items.map((item) => {
-                        if (item.visible.includes(role))
+                        if (item.visible.includes(role)) {
+                            const isActive = pathname?.includes(item.href)
                             return (
                                 <Link
                                     href={item.href}
                                     key={item.label}
-                                    className="flex items-center justify-center gap-4 py-2 text-gray-500 hover:bg-skyLight md:px-2 lg:justify-start"
+                                    className={`flex items-center justify-center gap-4 py-2 text-gray-500 hover:bg-skyLight md:px-2 lg:justify-start ${
+                                        isActive ? 'bg-skyLight' : ''
+                                    }`}
                                 >
                                     <Image
                                         src={item.icon}
@@ -146,6 +153,7 @@ const Menu = async () => {
                                     </span>
                                 </Link>
                             )
+                        }
                     })}
                 </div>
             ))}

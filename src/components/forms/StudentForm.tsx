@@ -70,7 +70,7 @@ const StudentForm = ({
             <span className="text-xs font-medium text-gray-400">
                 Authentication Information
             </span>
-            <div className="flex flex-wrap justify-between gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 {data?.id && (
                     <InputField
                         label="Id"
@@ -107,7 +107,7 @@ const StudentForm = ({
             <span className="text-xs font-medium text-gray-400">
                 Personal Information
             </span>
-            <div className="flex flex-wrap justify-between gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 <InputField
                     label="Name"
                     name="name"
@@ -151,7 +151,7 @@ const StudentForm = ({
                     error={errors.birthday}
                     type="date"
                 />
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                <div className="flex w-full flex-col gap-2">
                     <label className="text-xs text-gray-500">Sex</label>
                     <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
@@ -167,7 +167,7 @@ const StudentForm = ({
                         </p>
                     )}
                 </div>
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                <div className="flex w-full flex-col gap-2">
                     <label className="text-xs text-gray-500">Parent</label>
                     <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
@@ -192,7 +192,7 @@ const StudentForm = ({
                         </p>
                     )}
                 </div>
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                <div className="flex w-full flex-col gap-2">
                     <label className="text-xs text-gray-500">Class</label>
                     <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
@@ -215,7 +215,7 @@ const StudentForm = ({
                         </p>
                     )}
                 </div>
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
+                <div className="flex w-full flex-col gap-2">
                     <label className="text-xs text-gray-500">Grade</label>
                     <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
@@ -236,29 +236,32 @@ const StudentForm = ({
                         </p>
                     )}
                 </div>
-                <CldUploadWidget
-                    uploadPreset="school"
-                    onSuccess={(result) => {
-                        setImg(result)
-                    }}
-                >
-                    {({ open }) => {
-                        return (
-                            <label
-                                className="flex cursor-pointer items-center gap-2 text-xs text-gray-500"
-                                onClick={() => open()}
-                            >
-                                <Image
-                                    src="/upload.png"
-                                    alt=""
-                                    width={28}
-                                    height={28}
-                                />
-                                <span>Upload a photo</span>
-                            </label>
-                        )
-                    }}
-                </CldUploadWidget>
+                <div className="flex w-full flex-col items-center gap-2">
+                    <label className="opacity-0">Upload Image</label>
+                    <CldUploadWidget
+                        uploadPreset="school"
+                        onSuccess={(result) => {
+                            setImg(result)
+                        }}
+                    >
+                        {({ open }) => {
+                            return (
+                                <label
+                                    className="flex cursor-pointer items-center gap-2 text-xs text-gray-500"
+                                    onClick={() => open()}
+                                >
+                                    <Image
+                                        src="/upload.png"
+                                        alt=""
+                                        width={28}
+                                        height={28}
+                                    />
+                                    <span>Upload a photo</span>
+                                </label>
+                            )
+                        }}
+                    </CldUploadWidget>
+                </div>
             </div>
             <button className="rounded-md bg-blue-400 p-2 text-white">
                 {type === 'create' ? 'Create' : 'Update'}

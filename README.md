@@ -27,8 +27,14 @@ To learn more about Next.js, take a look at the following resources:
 ## TODO
 
 - To add UI for empty [*]
-- To replace select with custom Open
+- To replace select with custom Open [*]
 - To add CRUD func for the rest
+    - Parent
+    - Lesson
+    - Assignment
+    - result
+    - Event
+    - Announcement
 - To refactor code
 - To add loading (skeleton) [*]
 - To add active class for menu

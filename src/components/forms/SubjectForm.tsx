@@ -1,16 +1,18 @@
+'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormState } from 'react-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
+import Select from 'react-select'
 import { toast } from 'react-toastify'
 
 // local imports
+
 import { createSubject, updateSubject } from '@/lib/actions'
 import { subjectSchema, SubjectInputs } from '@/lib/formValidationSchema'
 
 import InputField from '../InputField'
-
 
 const SubjectForm = ({
     setOpen,
@@ -23,12 +25,18 @@ const SubjectForm = ({
     data: any
     relatedData?: any
 }) => {
+    const defaultSubject = {
+        ...data,
+        teachers: data?.teachers?.map((teacher: any) => String(teacher.id)),
+    }
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<SubjectInputs>({
         resolver: zodResolver(subjectSchema),
+        defaultValues: defaultSubject,
     })
 
     const [state, formAction] = useFormState(
@@ -39,12 +47,24 @@ const SubjectForm = ({
             message: '',
         }
     )
+    const [teacherOptions, setTeacherOptions] = useState([])
 
     const router = useRouter()
 
     const onSubmit = handleSubmit((data) => {
+        console.log('🚀 ~ SubjectForm.tsx:52 ~ onSubmit ~ data:', data)
         formAction(data)
     })
+
+    useEffect(() => {
+        if (relatedData) {
+            const options = relatedData.teachers.map((teacher: any) => ({
+                value: String(teacher.id),
+                label: teacher.name + ' ' + teacher.surname,
+            }))
+            setTeacherOptions(options)
+        }
+    }, [relatedData])
 
     useEffect(() => {
         if (state.success) {
@@ -68,14 +88,16 @@ const SubjectForm = ({
                 </p>
             )}
 
-            <div className="flex flex-wrap justify-between gap-4">
-                <InputField
-                    label="Subject Name"
-                    name="name"
-                    defaultValue={data?.name}
-                    register={register}
-                    error={errors?.name}
-                />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <div>
+                    <InputField
+                        label="Subject Name"
+                        name="name"
+                        defaultValue={data?.name}
+                        register={register}
+                        error={errors?.name}
+                    />
+                </div>
                 {data && (
                     <InputField
                         label="Id"
@@ -86,9 +108,37 @@ const SubjectForm = ({
                         hidden
                     />
                 )}
-                <div className="flex w-full flex-col gap-2 md:w-1/4">
-                    <label className="text-xs text-gray-500">Sex</label>
-                    <select
+                <div>
+                    <label className="text-xs text-gray-500">Teachers</label>
+                    <Controller
+                        name="teachers"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                {...field}
+                                options={teacherOptions}
+                                isMulti
+                                closeMenuOnSelect={false}
+                                isSearchable
+                                value={teacherOptions.filter(
+                                    (option: {
+                                        value: string
+                                        label: string
+                                    }) =>
+                                        field.value?.includes(
+                                            String(option.value)
+                                        )
+                                )}
+                                onChange={(val) => {
+                                    const selectedValues =
+                                        val?.map((v: any) => String(v.value)) ||
+                                        []
+                                    field.onChange(selectedValues)
+                                }}
+                            />
+                        )}
+                    />
+                    {/* <select
                         className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
                         {...register('teachers')}
                         defaultValue={data?.teachers}
@@ -99,7 +149,7 @@ const SubjectForm = ({
                                 {teacher.name + ' ' + teacher.surname}
                             </option>
                         ))}
-                    </select>
+                    </select> */}
                     {errors.teachers?.message && (
                         <p className="text-xs text-red-400">
                             {errors.teachers.message.toString()}

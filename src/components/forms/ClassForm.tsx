@@ -8,7 +8,6 @@ import { toast } from 'react-toastify'
 import { createClass, updateClass } from '@/lib/actions'
 import { ClassInputs, classSchema } from '@/lib/formValidationSchema'
 
-
 import InputField from '../InputField'
 
 const ClassForm = ({
@@ -71,7 +70,7 @@ const ClassForm = ({
             )}
             {/* Form */}
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
-                <div className="flex flex-wrap justify-between gap-4">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                     <InputField
                         label="Id"
                         name="id"
@@ -96,7 +95,7 @@ const ClassForm = ({
                         defaultValue={data?.capacity}
                         error={errors.capacity}
                     />
-                    <div className="flex w-full flex-col gap-2 md:w-1/4">
+                    <div className="flex w-full flex-col gap-2">
                         <label className="text-xs text-gray-500">
                             Supervisor
                         </label>
@@ -117,7 +116,7 @@ const ClassForm = ({
                             </p>
                         )}
                     </div>
-                    <div className="flex w-full flex-col gap-2 md:w-1/4">
+                    <div className="flex w-full flex-col gap-2">
                         <label className="text-xs text-gray-500">Grade</label>
                         <select
                             className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
