@@ -1,7 +1,8 @@
+import { auth } from "@clerk/nextjs/server";
 import React from 'react'
+
 import { prisma } from '@/lib/prisma'
 
-import { auth } from "@clerk/nextjs/server";
 const Announcements = async () => {
     const { userId, sessionClaims } = await auth();
     const role = (sessionClaims?.metadata as { role?: string })?.role;

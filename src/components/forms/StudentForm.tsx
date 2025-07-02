@@ -1,17 +1,19 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import InputField from '../InputField'
 import Image from 'next/image'
-import { StudentInputs, studentSchema } from '@/lib/formValidationSchema'
+import { useRouter } from 'next/navigation'
 import { CldUploadWidget } from 'next-cloudinary'
 import { useState } from 'react'
-import { useFormState } from 'react-dom'
-import { createStudent, updateStudent } from '@/lib/actions'
-import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { useFormState } from 'react-dom'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+
+import { createStudent, updateStudent } from '@/lib/actions'
+import { StudentInputs, studentSchema } from '@/lib/formValidationSchema'
+
+import InputField from '../InputField'
 
 const StudentForm = ({
     setOpen,

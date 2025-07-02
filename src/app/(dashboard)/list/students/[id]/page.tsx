@@ -1,13 +1,14 @@
-import Announcements from '@/components/Announcements'
-import FormContainer from '@/components/FormContainer'
-import StudentAttendanceCard from '@/components/StudentAttendanceCard'
-import Performance from '@/components/Performance'
-import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
+
+import Announcements from '@/components/Announcements'
 import BigCalendarContainer from '@/components/BigCalendarContainer'
+import FormContainer from '@/components/FormContainer'
+import Performance from '@/components/Performance'
+import StudentAttendanceCard from '@/components/StudentAttendanceCard'
+import { prisma } from '@/lib/prisma'
 
 const StudentDetailPage = async ({ params }: { params: { id: string } }) => {
     const { id } = params

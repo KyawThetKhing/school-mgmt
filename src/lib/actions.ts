@@ -1,5 +1,8 @@
 'use server'
+import { clerkClient } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
+
+import { errorHandling } from './errorHandling'
 import {
     ClassInputs,
     ExamInputs,
@@ -8,9 +11,7 @@ import {
     TeacherInputs,
 } from './formValidationSchema'
 import { prisma } from './prisma'
-import { clerkClient } from '@clerk/nextjs/server'
 import { currentUserId, role } from './utils'
-import { errorHandling } from './errorHandling'
 
 type CurrentState = { success: boolean; error: boolean }
 

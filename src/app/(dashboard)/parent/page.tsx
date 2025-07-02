@@ -1,6 +1,7 @@
+import React from 'react'
+
 import Announcements from '@/components/Announcements'
 import BigCalendar from '@/components/BigCalendar'
-import React from 'react'
 
 function ParentPage() {
     return (

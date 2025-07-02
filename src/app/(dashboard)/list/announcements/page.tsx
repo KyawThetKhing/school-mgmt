@@ -1,9 +1,10 @@
-import TableSearch from '@/components/TableSearch'
+import { Announcement, Prisma, Class } from '@prisma/client'
 import Image from 'next/image'
+
+import FormModal from '@/components/FormModal'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import FormModal from '@/components/FormModal'
-import { Announcement, Prisma, Class } from '@prisma/client'
+import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
 import { currentUserId, role } from '@/lib/utils'

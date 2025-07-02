@@ -1,15 +1,16 @@
+import { Prisma, Student, Class } from '@prisma/client'
+import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
-import TableSearch from '@/components/TableSearch'
-import Image from 'next/image'
+import FormContainer from '@/components/FormContainer'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import Link from 'next/link'
-import { role } from '@/lib/utils'
-import FormContainer from '@/components/FormContainer'
+import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
-import { Prisma, Student, Class } from '@prisma/client'
 import { ITEM_PER_PAGE } from '@/lib/settings'
+import { role } from '@/lib/utils'
+
 
 type StudentList = Student & { class: Class }
 

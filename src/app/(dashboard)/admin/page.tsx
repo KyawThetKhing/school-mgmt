@@ -1,10 +1,11 @@
 import React from 'react'
-import UserCard from '@/components/UserCard'
-import CountChartContainer from '@/components/CountChartContainer'
-import AttendanceChartContainer from '@/components/AttendanceChartContainer'
-import FinanceChart from '@/components/FinanceChart'
+
 import Announcements from '@/components/Announcements'
+import AttendanceChartContainer from '@/components/AttendanceChartContainer'
+import CountChartContainer from '@/components/CountChartContainer'
 import EventCalendarContainer from '@/components/EventCalendarContainer'
+import FinanceChart from '@/components/FinanceChart'
+import UserCard from '@/components/UserCard'
 
 function AdminPage({
     searchParams,

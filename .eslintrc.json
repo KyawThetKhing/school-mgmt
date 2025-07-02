@@ -1,3 +1,41 @@
 {
-    "extends": "next/core-web-vitals"
+    "extends": "next/core-web-vitals",
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["import"],
+    "rules": {
+        "import/order": [
+            "warn",
+            {
+                "groups": [
+                    "builtin", // Node.js built-ins
+                    "external", // npm packages like react, next, axios
+                    "internal", // aliases like @/ or ~/
+                    ["parent", "sibling", "index"], // relative imports
+                    "type" // type-only imports
+                ],
+                "pathGroups": [
+                    {
+                        "pattern": "@/**",
+                        "group": "internal"
+                    },
+                    {
+                        "pattern": "~/**",
+                        "group": "internal"
+                    }
+                ],
+                "pathGroupsExcludedImportTypes": ["builtin"],
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
+            }
+        ]
+    },
+    "settings": {
+        "import/resolver": {
+            "typescript": {}
+        }
+    },
+    "ignorePatterns": ["src/generated/prisma/**"]
 }

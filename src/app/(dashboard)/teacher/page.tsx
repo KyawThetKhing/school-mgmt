@@ -1,7 +1,8 @@
+import React from 'react'
+
 import Announcements from '@/components/Announcements'
 import BigCalendarContainer from '@/components/BigCalendarContainer'
 import { currentUserId } from '@/lib/utils'
-import React from 'react'
 
 async function TeacherPage() {
     return (

@@ -1,5 +1,6 @@
-import React from 'react'
 import Image from 'next/image'
+import React from 'react'
+
 import { prisma } from '@/lib/prisma'
 
 const UserCard = async ({

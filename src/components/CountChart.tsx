@@ -1,7 +1,7 @@
 'use client'
+import Image from 'next/image'
 import React from 'react'
 import { RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts'
-import Image from 'next/image'
 
 const CountChart = ({ boys, girls }: { boys: number; girls: number }) => {
     const data = [

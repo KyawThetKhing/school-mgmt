@@ -1,12 +1,15 @@
-import InputField from '../InputField'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ClassInputs, classSchema } from '@/lib/formValidationSchema'
-import { createClass, updateClass } from '@/lib/actions'
-import { useFormState } from 'react-dom'
-import { useEffect } from 'react'
-import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useFormState } from 'react-dom'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+
+import { createClass, updateClass } from '@/lib/actions'
+import { ClassInputs, classSchema } from '@/lib/formValidationSchema'
+
+
+import InputField from '../InputField'
 
 const ClassForm = ({
     setOpen,

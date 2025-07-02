@@ -1,6 +1,8 @@
 import Image from 'next/image'
-import AttendanceChart from './AttendanceChart'
+
 import { prisma } from '@/lib/prisma'
+
+import AttendanceChart from './AttendanceChart'
 
 const AttendanceChartContainer = async () => {
     const today = new Date()

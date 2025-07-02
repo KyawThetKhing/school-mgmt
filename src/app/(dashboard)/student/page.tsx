@@ -1,9 +1,10 @@
+import React from 'react'
+
 import Announcements from '@/components/Announcements'
 import BigCalendarContainer from '@/components/BigCalendarContainer'
 import EventCalendar from '@/components/EventCalendar'
 import { prisma } from '@/lib/prisma'
 import { currentUserId } from '@/lib/utils'
-import React from 'react'
 
 async function StudentPage() {
     const student = await prisma.student.findUnique({

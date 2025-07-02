@@ -1,7 +1,8 @@
 import Image from 'next/image'
-import EventList from './EventList'
-import EventCalendar from './EventCalendar'
 import { useRouter } from 'next/navigation'
+
+import EventCalendar from './EventCalendar'
+import EventList from './EventList'
 
 const EventCalendarContainer = async ({
     searchParams,

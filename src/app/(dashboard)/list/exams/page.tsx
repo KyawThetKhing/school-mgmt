@@ -1,14 +1,14 @@
+import { Class, Exam, Prisma, Subject, Teacher } from '@prisma/client'
+import Image from 'next/image'
 import React from 'react'
 
-import TableSearch from '@/components/TableSearch'
-import Image from 'next/image'
+import FormContainer from '@/components/FormContainer'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import { currentUserId, role } from '@/lib/utils'
-import { Class, Exam, Prisma, Subject, Teacher } from '@prisma/client'
+import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import FormContainer from '@/components/FormContainer'
+import { currentUserId, role } from '@/lib/utils'
 
 type ExamList = Exam & {
     lesson: {

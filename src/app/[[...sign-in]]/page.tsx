@@ -2,10 +2,10 @@
 
 import * as Clerk from '@clerk/elements/common'
 import * as SignIn from '@clerk/elements/sign-in'
-import Image from 'next/image'
 import { useUser } from '@clerk/nextjs'
-import { useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 const LoginPage = () => {
     const { isSignedIn, user, isLoaded } = useUser()

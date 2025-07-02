@@ -1,6 +1,8 @@
 import React from 'react'
-import BigCalendar from './BigCalendar'
+
 import { prisma } from '@/lib/prisma'
+
+import BigCalendar from './BigCalendar'
 
 const BigCalendarContainer = async ({
     type,

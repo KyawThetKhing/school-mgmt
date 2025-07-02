@@ -1,17 +1,19 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
-import InputField from '../InputField'
-import { TeacherInputs, teacherSchema } from '@/lib/formValidationSchema'
-import { useFormState } from 'react-dom'
-import { createTeacher, updateTeacher } from '@/lib/actions'
 import { useRouter } from 'next/navigation'
-import { toast } from 'react-toastify'
 import { CldUploadWidget } from 'next-cloudinary'
+import React, { useEffect, useState } from 'react'
+import { useFormState } from 'react-dom'
+import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
+import { toast } from 'react-toastify'
+
+import { createTeacher, updateTeacher } from '@/lib/actions'
+import { TeacherInputs, teacherSchema } from '@/lib/formValidationSchema'
+
+import InputField from '../InputField'
 
 const animatedComponents = makeAnimated()
 

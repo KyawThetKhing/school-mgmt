@@ -1,14 +1,16 @@
+import { Prisma, Subject, Teacher } from '@prisma/client'
+import Image from 'next/image'
 import React from 'react'
 
-import TableSearch from '@/components/TableSearch'
-import Image from 'next/image'
+import FormContainer from '@/components/FormContainer'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
-import { role } from '@/lib/utils'
+import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { Prisma, Subject, Teacher } from '@prisma/client'
-import FormContainer from '@/components/FormContainer'
+import { role } from '@/lib/utils'
+
+
 
 type SubjectList = Subject & { teachers: Teacher[] }
 

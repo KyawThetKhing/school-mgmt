@@ -1,13 +1,16 @@
-import Announcements from '@/components/Announcements'
-import FormContainer from '@/components/FormContainer'
-import Performance from '@/components/Performance'
+import { Teacher } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
-import { prisma } from '@/lib/prisma'
-import { Teacher } from '@prisma/client'
 import { notFound } from 'next/navigation'
+import React from 'react'
+
+import Announcements from '@/components/Announcements'
 import BigCalendarContainer from '@/components/BigCalendarContainer'
+import FormContainer from '@/components/FormContainer'
+import Performance from '@/components/Performance'
+import { prisma } from '@/lib/prisma'
+
+
 
 const TeacherDetailPage = async ({ params }: { params: { id: string } }) => {
     const { id } = params
