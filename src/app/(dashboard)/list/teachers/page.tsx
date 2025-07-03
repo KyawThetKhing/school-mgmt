@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server'
 import { Teacher, Subject, Class, Prisma } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -9,112 +10,58 @@ import Table from '@/components/Table'
 import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { role } from '@/lib/utils'
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] }
-const columns = [
-    {
-        header: 'Info',
-        accessor: 'info',
-    },
-    {
-        header: 'Teacher ID',
-        accessor: 'teacherId',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Subjects',
-        accessor: 'subjects',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Classes',
-        accessor: 'classes',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Phone',
-        accessor: 'phone',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Address',
-        accessor: 'address',
-        className: 'hidden md:table-cell',
-    },
-    ...(role === 'admin'
-        ? [
-              {
-                  header: 'Actions',
-                  accessor: 'action',
-              },
-          ]
-        : []),
-]
-
-const renderRow = (row: TeacherList) => {
-    return (
-        <tr
-            key={row.id}
-            className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
-        >
-            <td className="flex items-center gap-4 p-4">
-                <Image
-                    src={row.img || '/noAvatar.png'}
-                    alt={row.name}
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full object-cover md:hidden xl:block"
-                />
-                <div className="flex flex-col">
-                    <h3 className="font-semibold">{row.name}</h3>
-                    <p className="text-sm text-gray-500">{row?.email}</p>
-                </div>
-            </td>
-            <td className="hidden md:table-cell">{row.id}</td>
-            <td className="hidden md:table-cell">
-                {row.subjects.map((subject) => subject.name).join(',')}
-            </td>
-            <td className="hidden md:table-cell">
-                {row.classes.map((classItem) => classItem.name).join(',')}
-            </td>
-            <td className="hidden md:table-cell">{row.phone}</td>
-            <td className="hidden md:table-cell">{row.address}</td>
-            <td>
-                <div className="flex items-center gap-2">
-                    {role === 'admin' && (
-                        <>
-                            <Link href={`/list/teachers/${row.id}`}>
-                                <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                                    <Image
-                                        src="/view.png"
-                                        alt="edit"
-                                        width={16}
-                                        height={16}
-                                    />
-                                </button>
-                            </Link>
-                            <FormContainer
-                                table="teacher"
-                                type="delete"
-                                id={row.id}
-                            />
-                        </>
-                    )}
-                </div>
-            </td>
-        </tr>
-    )
-}
 
 const TeacherListPage = async ({
     searchParams,
 }: {
     searchParams: { [key: string]: string | undefined }
 }) => {
+    const { sessionClaims } = auth()
+    const role = (sessionClaims?.metadata as { role?: string })?.role
     const { page, ...otherParams } = searchParams
-    const p = page ? parseInt(page) : 1
 
+    const p = page ? parseInt(page) : 1
+    const columns = [
+        {
+            header: 'Info',
+            accessor: 'info',
+        },
+        {
+            header: 'Teacher ID',
+            accessor: 'teacherId',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Subjects',
+            accessor: 'subjects',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Classes',
+            accessor: 'classes',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Phone',
+            accessor: 'phone',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Address',
+            accessor: 'address',
+            className: 'hidden md:table-cell',
+        },
+        ...(role === 'admin'
+            ? [
+                  {
+                      header: 'Actions',
+                      accessor: 'action',
+                  },
+              ]
+            : []),
+    ]
     const query: Prisma.TeacherWhereInput = {}
 
     if (otherParams) {
@@ -155,6 +102,61 @@ const TeacherListPage = async ({
             where: query,
         }),
     ])
+
+    const renderRow = (row: TeacherList) => {
+        return (
+            <tr
+                key={row.id}
+                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
+            >
+                <td className="flex items-center gap-4 p-4">
+                    <Image
+                        src={row.img || '/noAvatar.png'}
+                        alt={row.name}
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 rounded-full object-cover md:hidden xl:block"
+                    />
+                    <div className="flex flex-col">
+                        <h3 className="font-semibold">{row.name}</h3>
+                        <p className="text-sm text-gray-500">{row?.email}</p>
+                    </div>
+                </td>
+                <td className="hidden md:table-cell">{row.id}</td>
+                <td className="hidden md:table-cell">
+                    {row.subjects.map((subject) => subject.name).join(',')}
+                </td>
+                <td className="hidden md:table-cell">
+                    {row.classes.map((classItem) => classItem.name).join(',')}
+                </td>
+                <td className="hidden md:table-cell">{row.phone}</td>
+                <td className="hidden md:table-cell">{row.address}</td>
+                <td>
+                    <div className="flex items-center gap-2">
+                        {role === 'admin' && (
+                            <>
+                                <Link href={`/list/teachers/${row.id}`}>
+                                    <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                                        <Image
+                                            src="/view.png"
+                                            alt="edit"
+                                            width={16}
+                                            height={16}
+                                        />
+                                    </button>
+                                </Link>
+                                <FormContainer
+                                    table="teacher"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+                    </div>
+                </td>
+            </tr>
+        )
+    }
 
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">

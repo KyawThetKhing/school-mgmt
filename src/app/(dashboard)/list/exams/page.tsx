@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server'
 import { Class, Exam, Prisma, Subject, Teacher } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
@@ -8,7 +9,6 @@ import Table from '@/components/Table'
 import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { currentUserId, role } from '@/lib/utils'
 
 type ExamList = Exam & {
     lesson: {
@@ -18,104 +18,50 @@ type ExamList = Exam & {
     }
 }
 
-const columns = [
-    {
-        header: 'Title',
-        accessor: 'title',
-    },
-    {
-        header: 'Subject',
-        accessor: 'subject',
-    },
-    {
-        header: 'Class',
-        accessor: 'class',
-    },
-    {
-        header: 'Teacher',
-        accessor: 'teacher',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Date',
-        accessor: 'date',
-        className: 'hidden md:table-cell',
-    },
-    ...(role === 'admin' || role === 'teacher'
-        ? [
-              {
-                  header: 'Actions',
-                  accessor: 'action',
-              },
-          ]
-        : []),
-]
-
-const renderRow = (row: ExamList) => {
-    return (
-        <tr
-            key={row.id}
-            className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
-        >
-            <td className="p-4">{row.title}</td>
-            <td className="p-4">{row.lesson.subject.name}</td>
-            <td>{row.lesson.class.name}</td>
-            <td className="hidden p-4 md:table-cell">
-                {row.lesson.teacher.name}
-            </td>
-            <td className="hidden p-4 md:table-cell">
-                {new Intl.DateTimeFormat('en-US').format(row.startTime)}
-            </td>
-            <td>
-                <div className="flex items-center gap-2">
-                    {(role === 'admin' || role === 'teacher') && (
-                        <>
-                            <FormContainer
-                                table="exam"
-                                type="update"
-                                data={row}
-                            />
-                            <FormContainer
-                                table="exam"
-                                type="delete"
-                                id={row.id}
-                            />
-                        </>
-                    )}
-                    {/*                         
-                    <Link href={`/list/exams/${row.id}`}>
-                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                            <Image
-                                src="/edit.png"
-                                alt="edit"
-                                width={16}
-                                height={16}
-                            />
-                        </button>
-                    </Link>
-                    {role === 'admin' && (
-                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
-                            <Image
-                                src="/delete.png"
-                                alt="edit"
-                                width={16}
-                                height={16}
-                            />
-                        </button>
-                    )} */}
-                </div>
-            </td>
-        </tr>
-    )
-}
-
 const ExamListPage = async ({
     searchParams,
 }: {
     searchParams: { [key: string]: string | undefined }
 }) => {
+    const { userId, sessionClaims } = auth()
+    const role = (sessionClaims?.metadata as { role?: string })?.role
+    const currentUserId = userId
+
     const { page, ...otherParams } = searchParams
     const p = page ? parseInt(page) : 1
+
+    const columns = [
+        {
+            header: 'Title',
+            accessor: 'title',
+        },
+        {
+            header: 'Subject',
+            accessor: 'subject',
+        },
+        {
+            header: 'Class',
+            accessor: 'class',
+        },
+        {
+            header: 'Teacher',
+            accessor: 'teacher',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Date',
+            accessor: 'date',
+            className: 'hidden md:table-cell',
+        },
+        ...(role === 'admin' || role === 'teacher'
+            ? [
+                  {
+                      header: 'Actions',
+                      accessor: 'action',
+                  },
+              ]
+            : []),
+    ]
 
     const query: Prisma.ExamWhereInput = {}
 
@@ -189,6 +135,64 @@ const ExamListPage = async ({
             where: query,
         }),
     ])
+
+    const renderRow = (row: ExamList) => {
+        return (
+            <tr
+                key={row.id}
+                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
+            >
+                <td className="p-4">{row.title}</td>
+                <td className="p-4">{row.lesson.subject.name}</td>
+                <td>{row.lesson.class.name}</td>
+                <td className="hidden p-4 md:table-cell">
+                    {row.lesson.teacher.name}
+                </td>
+                <td className="hidden p-4 md:table-cell">
+                    {new Intl.DateTimeFormat('en-US').format(row.startTime)}
+                </td>
+                <td>
+                    <div className="flex items-center gap-2">
+                        {(role === 'admin' || role === 'teacher') && (
+                            <>
+                                <FormContainer
+                                    table="exam"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormContainer
+                                    table="exam"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+                        {/*                         
+                        <Link href={`/list/exams/${row.id}`}>
+                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                                <Image
+                                    src="/edit.png"
+                                    alt="edit"
+                                    width={16}
+                                    height={16}
+                                />
+                            </button>
+                        </Link>
+                        {role === 'admin' && (
+                            <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
+                                <Image
+                                    src="/delete.png"
+                                    alt="edit"
+                                    width={16}
+                                    height={16}
+                                />
+                            </button>
+                        )} */}
+                    </div>
+                </td>
+            </tr>
+        )
+    }
 
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">

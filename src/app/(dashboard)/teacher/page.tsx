@@ -1,10 +1,13 @@
+import { auth } from '@clerk/nextjs/server'
 import React from 'react'
 
 import Announcements from '@/components/Announcements'
 import BigCalendarContainer from '@/components/BigCalendarContainer'
-import { currentUserId } from '@/lib/utils'
 
 async function TeacherPage() {
+    const { userId } = auth()
+    const currentUserId = userId
+
     return (
         <div className="flex h-full w-full flex-1 flex-col gap-4 overflow-scroll p-4 md:flex-row">
             {/* LEFT */}

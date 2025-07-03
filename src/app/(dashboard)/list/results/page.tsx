@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server'
 import { Prisma } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
@@ -8,7 +9,6 @@ import Table from '@/components/Table'
 import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { currentUserId, role } from '@/lib/utils'
 
 type ResultList = {
     id: number
@@ -22,117 +22,60 @@ type ResultList = {
     startTime: Date
 }
 
-const columns = [
-    {
-        header: 'Title',
-        accessor: 'title',
-    },
-    {
-        header: 'Class',
-        accessor: 'className',
-    },
-    {
-        header: 'Teacher',
-        accessor: 'teacher',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Student',
-        accessor: 'student',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Date',
-        accessor: 'date',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Type',
-        accessor: 'type',
-        className: 'hidden md:table-cell',
-    },
-    {
-        header: 'Score',
-        accessor: 'score',
-        className: 'hidden md:table-cell',
-    },
-    ...(role === 'admin' || role === 'teacher'
-        ? [
-              {
-                  header: 'Actions',
-                  accessor: 'action',
-              },
-          ]
-        : []),
-]
-
-const renderRow = (row: ResultList) => {
-    return (
-        <tr
-            key={row.id}
-            className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
-        >
-            <td className="p-4">{row.title}</td>
-            <td>{row.className}</td>
-            <td className="hidden md:table-cell">
-                {row.teacherName + ' ' + row.teacherSurname}
-            </td>
-            <td className="hidden md:table-cell">
-                {row.studentName + ' ' + row.studentSurname}
-            </td>
-            <td className="hidden md:table-cell">
-                {new Intl.DateTimeFormat('en-US').format(row.startTime)}
-            </td>
-            <td className="hidden md:table-cell">{row.score}</td>
-            <td>
-                <div className="flex items-center gap-2">
-                    {(role === 'admin' || role === 'teacher') && (
-                        <>
-                            <FormModal
-                                table="result"
-                                type="update"
-                                data={row}
-                            />
-                            <FormModal
-                                table="result"
-                                type="delete"
-                                id={row.id}
-                            />
-                        </>
-                    )}
-
-                    {/* <Link href={`/list/assignments/${row.id}`}>
-                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
-                            <Image
-                                src="/edit.png"
-                                alt="edit"
-                                width={16}
-                                height={16}
-                            />
-                        </button>
-                    </Link>
-                    {role === 'admin' && (
-                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
-                            <Image
-                                src="/delete.png"
-                                alt="edit"
-                                width={16}
-                                height={16}
-                            />
-                        </button>
-                    )} */}
-                </div>
-            </td>
-        </tr>
-    )
-}
-
 const ResultListPage = async ({
     searchParams,
 }: {
     searchParams: { [key: string]: string | undefined }
 }) => {
+    const { userId, sessionClaims } = auth()
+    const role = (sessionClaims?.metadata as { role?: string })?.role
+    const currentUserId = userId
+
     const { page, ...queryParams } = searchParams
+
+    const columns = [
+        {
+            header: 'Title',
+            accessor: 'title',
+        },
+        {
+            header: 'Class',
+            accessor: 'className',
+        },
+        {
+            header: 'Teacher',
+            accessor: 'teacher',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Student',
+            accessor: 'student',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Date',
+            accessor: 'date',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Type',
+            accessor: 'type',
+            className: 'hidden md:table-cell',
+        },
+        {
+            header: 'Score',
+            accessor: 'score',
+            className: 'hidden md:table-cell',
+        },
+        ...(role === 'admin' || role === 'teacher'
+            ? [
+                  {
+                      header: 'Actions',
+                      accessor: 'action',
+                  },
+              ]
+            : []),
+    ]
 
     const p = page ? parseInt(page) : 1
 
@@ -262,6 +205,67 @@ const ResultListPage = async ({
             startTime: isExam ? assessment.startTime : assessment.startDate,
         }
     })
+
+    const renderRow = (row: ResultList) => {
+        return (
+            <tr
+                key={row.id}
+                className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
+            >
+                <td className="p-4">{row.title}</td>
+                <td>{row.className}</td>
+                <td className="hidden md:table-cell">
+                    {row.teacherName + ' ' + row.teacherSurname}
+                </td>
+                <td className="hidden md:table-cell">
+                    {row.studentName + ' ' + row.studentSurname}
+                </td>
+                <td className="hidden md:table-cell">
+                    {new Intl.DateTimeFormat('en-US').format(row.startTime)}
+                </td>
+                <td className="hidden md:table-cell">{row.score}</td>
+                <td>
+                    <div className="flex items-center gap-2">
+                        {(role === 'admin' || role === 'teacher') && (
+                            <>
+                                <FormModal
+                                    table="result"
+                                    type="update"
+                                    data={row}
+                                />
+                                <FormModal
+                                    table="result"
+                                    type="delete"
+                                    id={row.id}
+                                />
+                            </>
+                        )}
+
+                        {/* <Link href={`/list/assignments/${row.id}`}>
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-sky">
+                            <Image
+                                src="/edit.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
+                            />
+                        </button>
+                    </Link>
+                    {role === 'admin' && (
+                        <button className="flex h-7 w-7 items-center justify-center rounded-full bg-purple">
+                            <Image
+                                src="/delete.png"
+                                alt="edit"
+                                width={16}
+                                height={16}
+                            />
+                        </button>
+                    )} */}
+                    </div>
+                </td>
+            </tr>
+        )
+    }
 
     return (
         <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">

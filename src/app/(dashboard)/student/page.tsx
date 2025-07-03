@@ -1,12 +1,15 @@
+import { auth } from '@clerk/nextjs/server'
 import React from 'react'
 
 import Announcements from '@/components/Announcements'
 import BigCalendarContainer from '@/components/BigCalendarContainer'
 import EventCalendar from '@/components/EventCalendar'
 import { prisma } from '@/lib/prisma'
-import { currentUserId } from '@/lib/utils'
 
 async function StudentPage() {
+    const { userId } = auth()
+    const currentUserId = userId
+
     const student = await prisma.student.findUnique({
         where: { id: currentUserId! as string },
         select: {
