@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 
 import {
     deleteClass,
+    deleteParent,
     deleteStudent,
     deleteSubject,
     deleteTeacher,
@@ -30,6 +31,10 @@ const ClassForm = dynamic(() => import('./forms/ClassForm'), {
 })
 
 const ExamForm = dynamic(() => import('./forms/ExamForm'), {
+    loading: () => <div>Loading...</div>,
+})
+
+const ParentForm = dynamic(() => import('./forms/ParentForm'), {
     loading: () => <div>Loading...</div>,
 })
 
@@ -81,13 +86,21 @@ const forms: {
             relatedData={realatedData}
         />
     ),
+    parent: (setOpen, type, data, relatedData) => (
+        <ParentForm
+            setOpen={setOpen}
+            type={type}
+            data={data}
+            relatedData={relatedData}
+        />
+    ),
 }
 
 const deleteActionMap = {
     subject: deleteSubject,
     teacher: deleteTeacher,
     student: deleteStudent,
-    parent: deleteSubject,
+    parent: deleteParent,
     class: deleteClass,
     lesson: deleteSubject,
     exam: deleteSubject,
@@ -130,6 +143,7 @@ const FormModal = ({
         const [state, formAction] = useFormState(deleteActionMap[table], {
             success: false,
             error: false,
+            message: '',
         })
 
         const router = useRouter()

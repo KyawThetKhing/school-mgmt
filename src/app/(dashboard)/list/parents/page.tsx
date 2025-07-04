@@ -3,13 +3,12 @@ import { Parent, Prisma, Student } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
 
-import FormModal from '@/components/FormModal'
+import FormContainer from '@/components/FormContainer'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { role } from '@/lib/utils'
 
 type ParentList = Parent & { students: Student[] }
 
@@ -111,14 +110,14 @@ const ParentListPage = async ({
                     <div className="flex items-center gap-2">
                         {role === 'admin' && (
                             <>
-                                <FormModal
-                                    table="parent"
+                                <FormContainer
                                     type="update"
+                                    table="parent"
                                     data={row}
                                 />
-                                <FormModal
-                                    table="parent"
+                                <FormContainer
                                     type="delete"
+                                    table="parent"
                                     id={row.id}
                                 />
                             </>
@@ -189,7 +188,7 @@ const ParentListPage = async ({
                             //         height={14}
                             //     />
                             // </button>
-                            <FormModal type="create" table="parent" />
+                            <FormContainer type="create" table="parent" />
                         )}
                     </div>
                 </div>

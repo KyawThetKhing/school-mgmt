@@ -6,12 +6,13 @@ import { errorHandling } from './errorHandling'
 import {
     ClassInputs,
     ExamInputs,
+    ParentInputs,
     StudentInputs,
     SubjectInputs,
     TeacherInputs,
 } from './formValidationSchema'
 import { prisma } from './prisma'
-import { currentUserId, role } from './utils'
+import { currentUserId, isClerkUser, role } from './utils'
 
 type CurrentState = { success: boolean; error: boolean }
 
@@ -351,9 +352,21 @@ export const deleteStudent = async (
     currentState: CurrentState,
     data: FormData
 ): Promise<{ success: boolean; error: boolean; message?: string }> => {
-    const id = data.get('id') as string
-    await clerkClient.users.deleteUser(id)
     try {
+        const id = data.get('id') as string
+        console.log('🚀 ~ actions.ts:357ss ~ id:', id)
+        if (isClerkUser(id)) {
+            await clerkClient().users.deleteUser(id)
+        }
+
+        const student = await prisma.student.findUnique({
+            where: { id },
+        })
+
+        if (!student) {
+            throw new Error(`Student with ID ${id} not found`)
+        }
+
         await prisma.student.delete({
             where: {
                 id: id,
@@ -363,6 +376,7 @@ export const deleteStudent = async (
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
     } catch (error) {
+        console.log('🚀 ~ actions.ts:357 ~ error:', error)
         return errorHandling(error)
     }
 }
@@ -449,6 +463,122 @@ export const deleteExam = async (
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
     } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const createParent = async (
+    currentState: CurrentState,
+    data: ParentInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        const { password, ...rest } = data
+        //create user in clerk
+        const user = await clerkClient().users.createUser({
+            username: data.username,
+            password: data.password,
+            firstName: data.name,
+            lastName: data.surname,
+            emailAddress: [data.email || ''],
+            publicMetadata: {
+                role: 'parent',
+            },
+        })
+
+        //create user in prisma
+        await prisma.parent.create({
+            data: {
+                id: user.id,
+                username: rest.username,
+                email: rest.email,
+                name: rest.name,
+                surname: rest.surname,
+                phone: rest.phone,
+                address: rest.address,
+                students: {
+                    connect: data.students?.map((studentId) => ({
+                        id: studentId,
+                    })),
+                },
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Parent created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const updateParent = async (
+    currentState: CurrentState,
+    data: ParentInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    if (!data.id) return { success: false, error: true, message: '' }
+    try {
+        await clerkClient().users.updateUser(data.id, {
+            username: data.username,
+            firstName: data.name,
+            lastName: data.surname,
+            ...(data.password && { password: data.password }),
+            // emailAddress: data.email,
+        })
+
+        // await prisma.student.updateMany({
+        //     where: {
+        //         id: { in: data.students },
+        //     },
+        //     data: {
+        //         parentId: data.id,
+        //     },
+        // })
+
+        await prisma.parent.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                username: data.username,
+                email: data.email,
+                name: data.name,
+                surname: data.surname,
+                phone: data.phone,
+                address: data.address,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Parent updated successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const deleteParent = async (
+    currentState: CurrentState,
+    data: FormData
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        const id = data.get('id') as string
+        await clerkClient().users.deleteUser(id)
+        await prisma.parent.delete({
+            where: {
+                id: id,
+            },
+        })
+
+        // revalidatePath("/list/subjects");
+        return {
+            success: true,
+            error: false,
+            message: 'Parent deleted successfully!',
+        }
+    } catch (error) {
+        console.log('🚀 ~ actions.ts:569 ~ error:', error)
         return errorHandling(error)
     }
 }

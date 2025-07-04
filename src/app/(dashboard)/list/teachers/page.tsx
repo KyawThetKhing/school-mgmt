@@ -102,6 +102,7 @@ const TeacherListPage = async ({
             where: query,
         }),
     ])
+    console.log('🚀 ~ page.tsx:105 ~ data:', data)
 
     const renderRow = (row: TeacherList) => {
         return (

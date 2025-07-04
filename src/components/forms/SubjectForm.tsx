@@ -52,7 +52,6 @@ const SubjectForm = ({
     const router = useRouter()
 
     const onSubmit = handleSubmit((data) => {
-        console.log('🚀 ~ SubjectForm.tsx:52 ~ onSubmit ~ data:', data)
         formAction(data)
     })
 

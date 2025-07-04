@@ -24,6 +24,12 @@ To learn more about Next.js, take a look at the following resources:
 
 - [Next.js](https://nextjs.org/learn)
 
+## Database
+
+## Database Schema
+
+- [ER Diagram](prisma/database.png)
+
 ## TODO
 
 - To add UI for empty [*]
