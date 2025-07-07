@@ -38,6 +38,10 @@ const ParentForm = dynamic(() => import('./forms/ParentForm'), {
     loading: () => <div>Loading...</div>,
 })
 
+const LessonForm = dynamic(() => import('./forms/LessonForm'), {
+    loading: () => <div>Loading...</div>,
+})
+
 const forms: {
     [key: string]: (
         setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -94,6 +98,16 @@ const forms: {
             relatedData={relatedData}
         />
     ),
+    lesson: (setOpen, type, data, realtedData) => {
+        return (
+            <LessonForm
+                setOpen={setOpen}
+                type={type}
+                data={data}
+                relatedData={realtedData}
+            />
+        )
+    },
 }
 
 const deleteActionMap = {

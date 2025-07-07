@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useFormState } from 'react-dom'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import Select from 'react-select'
 import { toast } from 'react-toastify'
 
 import { createParent, updateParent } from '@/lib/actions'
@@ -23,10 +22,6 @@ const ParentForm = ({
     data?: any
     relatedData?: any
 }) => {
-    const parentData = {
-        ...data,
-        students: data?.students?.map((student: any) => student.id),
-    }
     const {
         register,
         handleSubmit,
@@ -34,21 +29,9 @@ const ParentForm = ({
         formState: { errors },
     } = useForm<ParentInputs>({
         resolver: zodResolver(parentFormSchema),
-        defaultValues: parentData,
+        defaultValues: data,
     })
-    const [studentOptions, setStudentOptions] = useState([])
     const router = useRouter()
-
-    useEffect(() => {
-        if (relatedData) {
-            setStudentOptions(
-                relatedData.students.map((student: any) => ({
-                    value: student.id,
-                    label: student.name + ' ' + student.surname,
-                }))
-            )
-        }
-    }, [relatedData])
 
     const [state, formAction] = useFormState(
         type === 'create' ? createParent : updateParent,
@@ -135,34 +118,6 @@ const ParentForm = ({
                     register={register}
                     error={errors?.address}
                 />
-                {type === 'create' && (
-                    <div>
-                        <label className="text-xs text-gray-500">
-                            Students
-                        </label>
-                        <Controller
-                            name="students"
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                                <Select
-                                    isMulti
-                                    options={studentOptions}
-                                    {...field}
-                                    value={studentOptions?.filter((s: any) =>
-                                        field.value?.includes(s.value)
-                                    )}
-                                    onChange={(val: any) => {
-                                        const selectedValues = val.map(
-                                            (v: any) => v.value
-                                        )
-                                        field.onChange(selectedValues)
-                                    }}
-                                />
-                            )}
-                        />
-                    </div>
-                )}
             </div>
 
             <button

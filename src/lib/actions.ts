@@ -6,6 +6,7 @@ import { errorHandling } from './errorHandling'
 import {
     ClassInputs,
     ExamInputs,
+    LessonInputs,
     ParentInputs,
     StudentInputs,
     SubjectInputs,
@@ -313,20 +314,20 @@ export const updateStudent = async (
 ): Promise<{ success: boolean; error: boolean; message?: string }> => {
     if (!data.id) return { success: false, error: true }
     try {
-        const user = await clerkClient().users.updateUser(data.id, {
-            username: data.username,
-            firstName: data.name,
-            lastName: data.surname,
-            ...(data.password && { password: data.password }),
-            // emailAddress: data.email,
-        })
-
+        if (isClerkUser(data.id)) {
+            await clerkClient().users.updateUser(data.id, {
+                username: data.username,
+                firstName: data.name,
+                lastName: data.surname,
+                ...(data.password && { password: data.password }),
+                // emailAddress: data.email,
+            })
+        }
         await prisma.student.update({
             where: {
                 id: data.id,
             },
             data: {
-                id: user.id,
                 username: data.username,
                 email: data.email,
                 name: data.name,
@@ -354,7 +355,6 @@ export const deleteStudent = async (
 ): Promise<{ success: boolean; error: boolean; message?: string }> => {
     try {
         const id = data.get('id') as string
-        console.log('🚀 ~ actions.ts:357ss ~ id:', id)
         if (isClerkUser(id)) {
             await clerkClient().users.deleteUser(id)
         }
@@ -376,7 +376,6 @@ export const deleteStudent = async (
         // revalidatePath("/list/subjects");
         return { success: true, error: false }
     } catch (error) {
-        console.log('🚀 ~ actions.ts:357 ~ error:', error)
         return errorHandling(error)
     }
 }
@@ -495,11 +494,6 @@ export const createParent = async (
                 surname: rest.surname,
                 phone: rest.phone,
                 address: rest.address,
-                students: {
-                    connect: data.students?.map((studentId) => ({
-                        id: studentId,
-                    })),
-                },
             },
         })
         return {
@@ -525,16 +519,6 @@ export const updateParent = async (
             ...(data.password && { password: data.password }),
             // emailAddress: data.email,
         })
-
-        // await prisma.student.updateMany({
-        //     where: {
-        //         id: { in: data.students },
-        //     },
-        //     data: {
-        //         parentId: data.id,
-        //     },
-        // })
-
         await prisma.parent.update({
             where: {
                 id: data.id,
@@ -578,7 +562,62 @@ export const deleteParent = async (
             message: 'Parent deleted successfully!',
         }
     } catch (error) {
-        console.log('🚀 ~ actions.ts:569 ~ error:', error)
+        return errorHandling(error)
+    }
+}
+
+export const createLesson = async (
+    currentState: CurrentState,
+    data: LessonInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        await prisma.lesson.create({
+            data: {
+                name: data.name,
+                day: data.day,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                subjectId: data.subject,
+                classId: data.class,
+                teacherId: data.teacher,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Lesson created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const updateLesson = async (
+    currentState: CurrentState,
+    data: LessonInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        if (!data.id) return { success: false, error: true, message: '' }
+        await prisma.lesson.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                name: data.name,
+                day: data.day,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                subjectId: data.subject,
+                classId: data.class,
+                teacherId: data.teacher,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Lesson created successfully!',
+        }
+    } catch (error) {
         return errorHandling(error)
     }
 }

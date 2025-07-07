@@ -106,7 +106,21 @@ export const parentFormSchema = z.object({
         message: 'Phone number must be at least 7 characters long!',
     }),
     address: z.string().min(1, { message: 'Address is required!' }),
-    students: z.array(z.string()).optional(),
 })
 
 export type ParentInputs = z.infer<typeof parentFormSchema>
+
+export const lessonSchema = z.object({
+    id: z.coerce.number().optional(),
+    name: z.string().min(1, { message: 'Name is required!' }),
+    day: z.enum(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'], {
+        message: 'Day is required!',
+    }),
+    startTime: z.coerce.date({ message: 'Start time is required!' }),
+    endTime: z.coerce.date({ message: 'End time is required!' }),
+    subject: z.coerce.number({ message: 'Subject is required!' }),
+    class: z.coerce.number({ message: 'Class is required!' }),
+    teacher: z.string({ message: 'Teacher is required!' }),
+})
+
+export type LessonInputs = z.infer<typeof lessonSchema>

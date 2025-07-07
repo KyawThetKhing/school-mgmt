@@ -3,6 +3,7 @@ import { Lesson, Prisma, Class, Subject, Teacher } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
 
+import FormContainer from '@/components/FormContainer'
 import FormModal from '@/components/FormModal'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
@@ -95,9 +96,9 @@ const LessonListPage = async ({
             where: query,
             take: ITEM_PER_PAGE,
             include: {
-                class: { select: { name: true } },
-                subject: { select: { name: true } },
-                teacher: { select: { name: true } },
+                class: { select: { id: true, name: true } },
+                subject: { select: { id: true, name: true } },
+                teacher: { select: { id: true, name: true } },
             },
             skip: (p - 1) * ITEM_PER_PAGE,
         }),
@@ -120,7 +121,7 @@ const LessonListPage = async ({
                     <div className="flex items-center gap-2">
                         {role === 'admin' && (
                             <>
-                                <FormModal
+                                <FormContainer
                                     table="lesson"
                                     type="update"
                                     data={row}
@@ -186,7 +187,7 @@ const LessonListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="lesson" type="create" />
+                            <FormContainer table="lesson" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"
