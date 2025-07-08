@@ -7,7 +7,6 @@ const nextConfig = {
             { hostname: 'images.pexels.com' },
             { hostname: 'res.cloudinary.com' },
         ],
-        domains: ['images.pexels.com', 'res.cloudinary.com'],
     },
 }
 

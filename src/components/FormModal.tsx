@@ -45,6 +45,9 @@ const LessonForm = dynamic(() => import('./forms/LessonForm'), {
 const AssignmentForm = dynamic(() => import('./forms/AssignmentForm'), {
     loading: () => <div>Loading...</div>,
 })
+const ResultForm = dynamic(() => import('./forms/ResultForm'), {
+    loading: () => <div>Loading...</div>,
+})
 
 const forms: {
     [key: string]: (
@@ -115,6 +118,16 @@ const forms: {
     assignment: (setOpen, type, data, relatedData) => {
         return (
             <AssignmentForm
+                setOpen={setOpen}
+                type={type}
+                data={data}
+                relatedData={relatedData}
+            />
+        )
+    },
+    result: (setOpen, type, data, relatedData) => {
+        return (
+            <ResultForm
                 setOpen={setOpen}
                 type={type}
                 data={data}

@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
 
+import FormContainer from '@/components/FormContainer'
 import FormModal from '@/components/FormModal'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
@@ -55,11 +56,6 @@ const ResultListPage = async ({
         {
             header: 'Date',
             accessor: 'date',
-            className: 'hidden md:table-cell',
-        },
-        {
-            header: 'Type',
-            accessor: 'type',
             className: 'hidden md:table-cell',
         },
         {
@@ -154,12 +150,12 @@ const ResultListPage = async ({
         prisma.result.findMany({
             where: query,
             include: {
-                student: { select: { name: true, surname: true } },
+                student: { select: { id: true, name: true, surname: true } },
                 exam: {
                     include: {
                         lesson: {
                             select: {
-                                class: { select: { name: true } },
+                                class: { select: { id: true, name: true } },
                                 teacher: {
                                     select: { name: true, surname: true },
                                 },
@@ -171,7 +167,7 @@ const ResultListPage = async ({
                     include: {
                         lesson: {
                             select: {
-                                class: { select: { name: true } },
+                                class: { select: { id: true, name: true } },
                                 teacher: {
                                     select: { name: true, surname: true },
                                 },
@@ -196,6 +192,9 @@ const ResultListPage = async ({
         return {
             id: item.id,
             title: assessment.title,
+            studentId: item.student.id,
+            examId: item.exam?.id,
+            assignmentId: item.assignment?.id,
             studentName: item.student.name,
             studentSurname: item.student.surname,
             teacherName: assessment.lesson.teacher.name,
@@ -228,7 +227,7 @@ const ResultListPage = async ({
                     <div className="flex items-center gap-2">
                         {(role === 'admin' || role === 'teacher') && (
                             <>
-                                <FormModal
+                                <FormContainer
                                     table="result"
                                     type="update"
                                     data={row}
@@ -294,7 +293,7 @@ const ResultListPage = async ({
                             />
                         </button>
                         {(role === 'admin' || role === 'teacher') && (
-                            <FormModal table="result" type="create" />
+                            <FormContainer table="result" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"

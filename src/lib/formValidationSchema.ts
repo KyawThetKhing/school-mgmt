@@ -134,3 +134,21 @@ export const assignmentSchema = z.object({
 })
 
 export type AssignmentInputs = z.infer<typeof assignmentSchema>
+
+export const resultSchema = z
+    .object({
+        id: z.coerce.number().optional(),
+        score: z.coerce.number({ message: 'Score is required!' }),
+        examId: z.coerce.number().optional(),
+        assignmentId: z.coerce.number().optional(),
+        studentId: z.string({ message: 'Student is required!' }),
+    })
+    .refine(
+        (data) => data.examId !== undefined || data.assignmentId !== undefined,
+        {
+            message: 'Either exam or assignment must be provided!',
+            path: ['examId'],
+        }
+    )
+
+export type ResultInputs = z.infer<typeof resultSchema>

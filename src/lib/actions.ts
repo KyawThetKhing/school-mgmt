@@ -9,6 +9,7 @@ import {
     ExamInputs,
     LessonInputs,
     ParentInputs,
+    ResultInputs,
     StudentInputs,
     SubjectInputs,
     TeacherInputs,
@@ -667,6 +668,56 @@ export const updateAssignment = async (
             success: true,
             error: false,
             message: 'Assignment updated successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const createResult = async (
+    currentState: CurrentState,
+    data: ResultInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        await prisma.result.create({
+            data: {
+                score: data.score,
+                examId: data.examId,
+                studentId: data.studentId,
+                assignmentId: data.assignmentId,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Result created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const updateResult = async (
+    currentState: CurrentState,
+    data: ResultInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        if (!data.id) return { success: false, error: true, message: '' }
+        await prisma.result.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                score: data.score,
+                examId: data.examId,
+                studentId: data.studentId,
+                assignmentId: data.assignmentId,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Result updated successfully!',
         }
     } catch (error) {
         return errorHandling(error)
