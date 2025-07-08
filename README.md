@@ -1,5 +1,37 @@
 # Dev School Management Dashboard
 
+### The project follows a YouTube tutorial by Lama Dev (https://www.youtube.com/@LamaDev) and includes additional features and best practices.
+
+## Core Technologies:
+
+- Framework: Next.js (https://nextjs.org/) (a React framework)
+- Language: TypeScript (https://www.typescriptlang.org/)
+- Styling: Tailwind CSS (https://tailwindcss.com/)
+- Database ORM: Prisma (https://www.prisma.io/)
+- Authentication: Clerk (https://clerk.com/)
+
+Key Features:
+
+- User Roles: The application appears to support different user roles like admin, teacher, student, and parent, each with their own dashboard view.
+- School Management: It provides functionalities to manage:
+    - Students
+    - Teachers
+    - Parents
+    - Classes & Subjects
+    - Lessons & Assignments
+    - Exams & Results
+    - Announcements & Events
+- Data Visualization: It uses Recharts for charts and React Big Calendar for calendars to display data.
+- Forms: It uses react-hook-form and zod for building and validating forms.
+- Image Uploads: It uses next-cloudinary for handling image uploads.
+
+Project Structure:
+
+- The project follows the Next.js App Router structure (src/app).
+- Database schema is defined in prisma/schema.prisma.
+- Reusable UI components are located in src/components.
+- Server-side logic, database queries, and utility functions are in src/lib.
+
 ## Getting Started
 
 First, run the development server:
