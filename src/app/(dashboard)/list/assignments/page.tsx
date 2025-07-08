@@ -3,6 +3,7 @@ import { Assignment, Class, Prisma, Subject, Teacher } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
 
+import FormContainer from '@/components/FormContainer'
 import FormModal from '@/components/FormModal'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
@@ -28,6 +29,10 @@ const AssignmentListPage = async ({
     const currentUserId = userId
 
     const columns = [
+        {
+            header: 'Title',
+            accessor: 'title',
+        },
         {
             header: 'Subject',
             accessor: 'subject',
@@ -126,6 +131,7 @@ const AssignmentListPage = async ({
                 key={row.id}
                 className="broder-b border-gray-200 text-sm even:bg-slate-50 hover:bg-purpleLight"
             >
+                <td className="p-4">{row.title}</td>
                 <td className="p-4">{row.lesson.subject.name}</td>
                 <td>{row.lesson.class.name}</td>
                 <td className="hidden md:table-cell">
@@ -138,7 +144,7 @@ const AssignmentListPage = async ({
                     <div className="flex items-center gap-2">
                         {(role === 'admin' || role === 'teacher') && (
                             <>
-                                <FormModal
+                                <FormContainer
                                     table="assignment"
                                     type="update"
                                     data={row}
@@ -204,7 +210,7 @@ const AssignmentListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="assignment" type="create" />
+                            <FormContainer table="assignment" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"

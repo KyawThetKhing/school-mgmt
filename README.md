@@ -68,7 +68,7 @@ To learn more about Next.js, take a look at the following resources:
 - To replace select with custom Open [*]
 - To add CRUD func for the rest
     - Parent [*]
-    - Lesson
+    - Lesson [*]
     - Assignment
     - result
     - Event

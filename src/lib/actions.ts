@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { errorHandling } from './errorHandling'
 import {
+    AssignmentInputs,
     ClassInputs,
     ExamInputs,
     LessonInputs,
@@ -15,7 +16,7 @@ import {
 import { prisma } from './prisma'
 import { currentUserId, isClerkUser, role } from './utils'
 
-type CurrentState = { success: boolean; error: boolean }
+type CurrentState = { success: boolean; error: boolean; message?: string }
 
 export const createSubject = async (
     currentState: CurrentState,
@@ -616,6 +617,56 @@ export const updateLesson = async (
             success: true,
             error: false,
             message: 'Lesson created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const createAssignment = async (
+    currentState: CurrentState,
+    data: AssignmentInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        await prisma.assignment.create({
+            data: {
+                title: data.title,
+                startDate: data.startDate,
+                dueDate: data.dueDate,
+                lessonId: data.lessonId,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Assignment created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const updateAssignment = async (
+    currentState: CurrentState,
+    data: AssignmentInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        if (!data.id) return { success: false, error: true, message: '' }
+        await prisma.assignment.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                title: data.title,
+                startDate: data.startDate,
+                dueDate: data.dueDate,
+                lessonId: data.lessonId,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Assignment updated successfully!',
         }
     } catch (error) {
         return errorHandling(error)

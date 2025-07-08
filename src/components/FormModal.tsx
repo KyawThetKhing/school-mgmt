@@ -42,6 +42,10 @@ const LessonForm = dynamic(() => import('./forms/LessonForm'), {
     loading: () => <div>Loading...</div>,
 })
 
+const AssignmentForm = dynamic(() => import('./forms/AssignmentForm'), {
+    loading: () => <div>Loading...</div>,
+})
+
 const forms: {
     [key: string]: (
         setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -105,6 +109,16 @@ const forms: {
                 type={type}
                 data={data}
                 relatedData={realtedData}
+            />
+        )
+    },
+    assignment: (setOpen, type, data, relatedData) => {
+        return (
+            <AssignmentForm
+                setOpen={setOpen}
+                type={type}
+                data={data}
+                relatedData={relatedData}
             />
         )
     },
