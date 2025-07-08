@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { errorHandling } from './errorHandling'
 import {
+    AnnouncementInputs,
     AssignmentInputs,
     ClassInputs,
     EventInputs,
@@ -771,6 +772,56 @@ export const updateEvent = async (
             success: true,
             error: false,
             message: 'Event updated successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const createAnnouncement = async (
+    currentState: CurrentState,
+    data: AnnouncementInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        await prisma.announcement.create({
+            data: {
+                title: data.title,
+                description: data.description,
+                date: data.date,
+                classId: data.classId || null,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Announcement created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const updateAnnouncement = async (
+    currentState: CurrentState,
+    data: AnnouncementInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        if (!data.id) return { success: false, error: true, message: '' }
+        await prisma.announcement.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                title: data.title,
+                description: data.description,
+                date: data.date,
+                classId: data.classId || null,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Announcement updated successfully!',
         }
     } catch (error) {
         return errorHandling(error)

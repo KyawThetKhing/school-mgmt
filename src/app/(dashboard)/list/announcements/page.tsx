@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { Announcement, Prisma, Class } from '@prisma/client'
 import Image from 'next/image'
 
+import FormContainer from '@/components/FormContainer'
 import FormModal from '@/components/FormModal'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
@@ -109,7 +110,7 @@ const AnnouncementListPage = async ({
                     <div className="flex items-center gap-2">
                         {role === 'admin' && (
                             <>
-                                <FormModal
+                                <FormContainer
                                     table="announcement"
                                     type="update"
                                     data={row}
@@ -174,7 +175,7 @@ const AnnouncementListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="announcement" type="create" />
+                            <FormContainer table="announcement" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"

@@ -53,6 +53,10 @@ const EventForm = dynamic(() => import('./forms/EventForm'), {
     loading: () => <div>Loading...</div>,
 })
 
+const AnnouncementForm = dynamic(() => import('./forms/AnnouncementForm'), {
+    loading: () => <div>Loading...</div>,
+})
+
 const forms: {
     [key: string]: (
         setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -142,6 +146,16 @@ const forms: {
     event: (setOpen, type, data, relatedData) => {
         return (
             <EventForm
+                setOpen={setOpen}
+                type={type}
+                data={data}
+                relatedData={relatedData}
+            />
+        )
+    },
+    announcement: (setOpen, type, data, relatedData) => {
+        return (
+            <AnnouncementForm
                 setOpen={setOpen}
                 type={type}
                 data={data}
