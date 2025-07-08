@@ -3,13 +3,13 @@ import { Prisma, Class, Event } from '@prisma/client'
 import Image from 'next/image'
 import React from 'react'
 
+import FormContainer from '@/components/FormContainer'
 import FormModal from '@/components/FormModal'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 import TableSearch from '@/components/TableSearch'
 import { prisma } from '@/lib/prisma'
 import { ITEM_PER_PAGE } from '@/lib/settings'
-import { currentUserId, role } from '@/lib/utils'
 
 type EventList = Event & { class: Class }
 
@@ -132,7 +132,7 @@ const EventListPage = async ({
                     <div className="flex items-center gap-2">
                         {role === 'admin' && (
                             <>
-                                <FormModal
+                                <FormContainer
                                     table="event"
                                     type="update"
                                     data={row}
@@ -198,7 +198,7 @@ const EventListPage = async ({
                             />
                         </button>
                         {role === 'admin' && (
-                            <FormModal table="event" type="create" />
+                            <FormContainer table="event" type="create" />
                             // <button className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow">
                             //     <Image
                             //         src="/plus.png"

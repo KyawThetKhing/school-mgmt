@@ -70,7 +70,7 @@ To learn more about Next.js, take a look at the following resources:
     - Parent [*]
     - Lesson [*]
     - Assignment [*]
-    - result
+    - result [*]
     - Event
     - Announcement
 - To refactor code

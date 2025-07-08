@@ -6,6 +6,7 @@ import { errorHandling } from './errorHandling'
 import {
     AssignmentInputs,
     ClassInputs,
+    EventInputs,
     ExamInputs,
     LessonInputs,
     ParentInputs,
@@ -718,6 +719,58 @@ export const updateResult = async (
             success: true,
             error: false,
             message: 'Result updated successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const createEvent = async (
+    currentState: CurrentState,
+    data: EventInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        await prisma.event.create({
+            data: {
+                title: data.title,
+                description: data.description,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                classId: data.classId,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Event created successfully!',
+        }
+    } catch (error) {
+        return errorHandling(error)
+    }
+}
+
+export const updateEvent = async (
+    currentState: CurrentState,
+    data: EventInputs
+): Promise<{ success: boolean; error: boolean; message?: string }> => {
+    try {
+        if (!data.id) return { success: false, error: true, message: '' }
+        await prisma.event.update({
+            where: {
+                id: data.id,
+            },
+            data: {
+                title: data.title,
+                description: data.description,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                classId: data.classId,
+            },
+        })
+        return {
+            success: true,
+            error: false,
+            message: 'Event updated successfully!',
         }
     } catch (error) {
         return errorHandling(error)
