@@ -7,10 +7,10 @@ import { useFormState } from 'react-dom'
 import { toast } from 'react-toastify'
 
 import {
+    deleteSubject,
     deleteClass,
     deleteParent,
     deleteStudent,
-    deleteSubject,
     deleteTeacher,
 } from '@/lib/actions'
 

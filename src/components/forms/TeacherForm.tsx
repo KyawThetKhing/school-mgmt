@@ -52,7 +52,11 @@ const TecherForm = ({
     )
 
     const onSubmit = handleSubmit((data) => {
-        formAction({ ...data, img: img?.secure_url })
+        const payload = {
+            ...data,
+            img: img?.info?.secure_url || data.img,
+        }
+        formAction(payload)
     })
 
     useEffect(() => {
@@ -77,6 +81,7 @@ const TecherForm = ({
         }
     }, [relatedData])
 
+    useEffect(() => {}, [errors])
     return (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
             <h1 className="text-xl font-semibold">
@@ -89,6 +94,7 @@ const TecherForm = ({
                     {state.message || 'Something went wrong'}
                 </p>
             )}
+
             <span className="text-xs font-medium text-gray-400">
                 Authentication Information
             </span>

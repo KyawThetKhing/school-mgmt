@@ -44,7 +44,11 @@ const StudentForm = ({
         }
     )
     const onSubmit = handleSubmit((data) => {
-        formAction({ ...data, img: img?.info?.secure_url || '' })
+        const payload = {
+            ...data,
+            img: img?.info?.secure_url || data.img,
+        }
+        formAction(payload)
     })
 
     useEffect(() => {
